@@ -4,7 +4,7 @@
 
 use crate::config::TreeConfig;
 use crate::icon;
-use crate::util::{format_byte_size, match_wildcard};
+use crate::util::{format_byte_size, match_wildcard, parse_gitignore_file};
 use std::fs;
 use std::path::Path;
 
@@ -51,6 +51,12 @@ pub fn calculate_dir_summary(dir: &Path, config: &TreeConfig) -> (u64, usize) {
     let mut total_size = 0u64;
     let mut total_files = 0usize;
 
+    let gitignore_patterns = if config.use_gitignore {
+        parse_gitignore_file(dir)
+    } else {
+        Vec::new()
+    };
+
     if let Ok(entries) = fs::read_dir(dir) {
         for entry in entries.flatten() {
             let file_name = entry.file_name().to_string_lossy().into_owned();
@@ -60,10 +66,11 @@ pub fn calculate_dir_summary(dir: &Path, config: &TreeConfig) -> (u64, usize) {
                 continue;
             }
 
-            // 除外パターンのフィルタ (ワイルドカード対応)
+            // 除外パターンのフィルタ (ワイルドカード & .gitignore 対応)
             let is_excluded = config
                 .exclude_patterns
                 .iter()
+                .chain(gitignore_patterns.iter())
                 .any(|pattern| match_wildcard(pattern, &file_name));
             if is_excluded {
                 continue;
@@ -106,6 +113,12 @@ pub fn print_tree(
         Err(_) => return, // 権限エラーなどはスキップ
     };
 
+    let gitignore_patterns = if config.use_gitignore {
+        parse_gitignore_file(dir)
+    } else {
+        Vec::new()
+    };
+
     // エントリを一度ベクターに詰める
     let mut valid_entries = Vec::new();
     for entry in entries.flatten() {
@@ -116,10 +129,11 @@ pub fn print_tree(
             continue;
         }
 
-        // 除外パターンのフィルタ (ワイルドカード対応)
+        // 除外パターンのフィルタ (ワイルドカード & .gitignore 対応)
         let is_excluded = config
             .exclude_patterns
             .iter()
+            .chain(gitignore_patterns.iter())
             .any(|pattern| match_wildcard(pattern, &file_name));
         if is_excluded {
             continue;

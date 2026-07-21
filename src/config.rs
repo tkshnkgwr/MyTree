@@ -26,6 +26,7 @@ pub struct TreeConfig {
     pub exclude_patterns: Vec<String>,
     pub classic_mode: bool,
     pub output_format: OutputFormat,
+    pub use_gitignore: bool,
 }
 
 impl Default for TreeConfig {
@@ -43,6 +44,7 @@ impl Default for TreeConfig {
                 .collect(),
             classic_mode: false,
             output_format: OutputFormat::Text,
+            use_gitignore: false,
         }
     }
 }
@@ -89,6 +91,9 @@ pub fn parse_arguments(args: &[String], config: &mut TreeConfig) -> Result<(), S
             }
             "-a" | "--all" => {
                 config.show_hidden = true;
+            }
+            "-g" | "--gitignore" => {
+                config.use_gitignore = true;
             }
             "--json" => {
                 config.output_format = OutputFormat::Json;
@@ -164,6 +169,7 @@ pub fn print_help() {
   --xml                      構造化データとしてXML形式で出力\n\n  \
 \x1b[36m【フィルタリング・探索制御】\x1b[0m\n  \
   -a, --all                  隠しファイル・ディレクトリ (ドット開始) も表示 [デフォルト: 無効]\n  \
+  -g, --gitignore            .gitignore ファイルを読み込んで除外パターンを自動適用 [デフォルト: 無効]\n  \
   -d, --depth <DEPTH>        探索する最大の階層深さを制限 (例: -d 2) [デフォルト: 無制限]\n  \
   -e, --exclude <PATTERNS>   除外する名前・ワイルドカード(*,?)をカンマ区切り指定 [デフォルト: \"target,node_modules,.git\"]",
         env!("CARGO_PKG_VERSION")
@@ -173,6 +179,82 @@ pub fn print_help() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_parse_arguments_default() {
+        let mut config = TreeConfig::default();
+        let args = vec!["MyTree".to_string()];
+        assert!(parse_arguments(&args, &mut config).is_ok());
+        assert_eq!(config.target_path, PathBuf::from("."));
+        assert!(config.show_icons);
+        assert!(config.show_sizes);
+        assert!(!config.show_dir_sizes);
+        assert!(!config.show_hidden);
+        assert!(!config.use_gitignore);
+        assert_eq!(config.max_depth, 0);
+        assert_eq!(config.output_format, OutputFormat::Text);
+    }
+
+    #[test]
+    fn test_parse_arguments_custom() {
+        let mut config = TreeConfig::default();
+        let args = vec![
+            "MyTree".to_string(),
+            "-a".to_string(),
+            "-g".to_string(),
+            "-d".to_string(),
+            "3".to_string(),
+            "-e".to_string(),
+            "*.tmp,build".to_string(),
+            "./src".to_string(),
+        ];
+        assert!(parse_arguments(&args, &mut config).is_ok());
+        assert_eq!(config.target_path, PathBuf::from("./src"));
+        assert!(config.show_hidden);
+        assert!(config.use_gitignore);
+        assert_eq!(config.max_depth, 3);
+        assert_eq!(config.exclude_patterns, vec!["*.tmp", "build"]);
+    }
+
+    #[test]
+    fn test_parse_arguments_classic() {
+        let mut config = TreeConfig::default();
+        let args = vec!["MyTree".to_string(), "-c".to_string()];
+        assert!(parse_arguments(&args, &mut config).is_ok());
+        assert!(config.classic_mode);
+        assert!(!config.show_icons);
+        assert!(!config.show_sizes);
+    }
+
+    #[test]
+    fn test_parse_arguments_no_icons_sizes() {
+        let mut config = TreeConfig::default();
+        let args = vec!["MyTree".to_string(), "-I".to_string(), "-S".to_string()];
+        assert!(parse_arguments(&args, &mut config).is_ok());
+        assert!(!config.show_icons);
+        assert!(!config.show_sizes);
+    }
+
+    #[test]
+    fn test_parse_arguments_dir_sizes() {
+        let mut config = TreeConfig::default();
+        let args = vec!["MyTree".to_string(), "-D".to_string()];
+        assert!(parse_arguments(&args, &mut config).is_ok());
+        assert!(config.show_dir_sizes);
+    }
+
+    #[test]
+    fn test_parse_arguments_json_xml() {
+        let mut config = TreeConfig::default();
+        let args = vec!["MyTree".to_string(), "--json".to_string()];
+        assert!(parse_arguments(&args, &mut config).is_ok());
+        assert_eq!(config.output_format, OutputFormat::Json);
+
+        let mut config = TreeConfig::default();
+        let args = vec!["MyTree".to_string(), "--xml".to_string()];
+        assert!(parse_arguments(&args, &mut config).is_ok());
+        assert_eq!(config.output_format, OutputFormat::Xml);
+    }
 
     #[test]
     fn test_parse_arguments_errors() {
@@ -204,76 +286,7 @@ mod tests {
     }
 
     #[test]
-    fn test_parse_arguments_default() {
-        let args = vec!["MyTree".to_string()];
-        let mut config = TreeConfig::default();
-        assert!(parse_arguments(&args, &mut config).is_ok());
-        assert!(config.show_icons);
-        assert!(config.show_sizes);
-        assert!(!config.show_hidden);
-        assert_eq!(config.max_depth, 0);
-        assert_eq!(config.output_format, OutputFormat::Text);
-    }
-
-    #[test]
-    fn test_parse_arguments_custom() {
-        let args = vec![
-            "MyTree".to_string(),
-            "-a".to_string(),
-            "-d".to_string(),
-            "3".to_string(),
-            "-e".to_string(),
-            "target,node_modules".to_string(),
-        ];
-        let mut config = TreeConfig::default();
-        assert!(parse_arguments(&args, &mut config).is_ok());
-        assert!(config.show_hidden);
-        assert_eq!(config.max_depth, 3);
-        assert_eq!(config.exclude_patterns, vec!["target", "node_modules"]);
-    }
-
-    #[test]
-    fn test_parse_arguments_no_icons_sizes() {
-        let args = vec!["MyTree".to_string(), "-I".to_string(), "-S".to_string()];
-        let mut config = TreeConfig::default();
-        assert!(parse_arguments(&args, &mut config).is_ok());
-        assert!(!config.show_icons);
-        assert!(!config.show_sizes);
-    }
-
-    #[test]
-    fn test_parse_arguments_dir_sizes() {
-        let args = vec!["MyTree".to_string(), "-D".to_string()];
-        let mut config = TreeConfig::default();
-        assert!(parse_arguments(&args, &mut config).is_ok());
-        assert!(config.show_dir_sizes);
-    }
-
-    #[test]
-    fn test_parse_arguments_classic() {
-        let args = vec!["MyTree".to_string(), "-c".to_string()];
-        let mut config = TreeConfig::default();
-        assert!(parse_arguments(&args, &mut config).is_ok());
-        assert!(config.classic_mode);
-        assert!(!config.show_icons);
-        assert!(!config.show_sizes);
-    }
-
-    #[test]
-    fn test_parse_arguments_json_xml() {
-        let args_json = vec!["MyTree".to_string(), "--json".to_string()];
-        let mut config = TreeConfig::default();
-        assert!(parse_arguments(&args_json, &mut config).is_ok());
-        assert_eq!(config.output_format, OutputFormat::Json);
-
-        let args_xml = vec!["MyTree".to_string(), "--xml".to_string()];
-        let mut config = TreeConfig::default();
-        assert!(parse_arguments(&args_xml, &mut config).is_ok());
-        assert_eq!(config.output_format, OutputFormat::Xml);
-    }
-
-    #[test]
     fn test_version_env() {
-        assert!(!env!("CARGO_PKG_VERSION").is_empty());
+        assert_eq!(env!("CARGO_PKG_VERSION"), "0.1.1");
     }
 }

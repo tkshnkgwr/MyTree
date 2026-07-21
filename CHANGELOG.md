@@ -13,6 +13,18 @@
   - テストコードも各モジュールに適切に整理・分散配置。
 
 ### Added
+- `.gitignore` ファイルの自動読み込み・除外パターン適用オプション (`-g` / `--gitignore`):
+  - 外部依存ゼロ（`std::fs` のみ）による `.gitignore` パース関数 `parse_gitignore_file` の実装。
+  - ディレクトリ探索および構造化データ (`--json` / `--xml`) シリアライズ時の動的パターン除外統合。
+  - `.gitignore` パース処理に対するユニットテストの追加。
+- ディレクトリおよびファイル絵文字アイコンの対応拡張子・特殊ファイル名の拡張 (`src/icon.rs`):
+  - フォルダアイコンの拡充 (`docs`, `.vscode`, `.idea`, `public`, `assets`, `static`)
+  - ロックファイル (`.lock`, `Cargo.lock`, `package-lock.json` 等 => 🔒)
+  - ビルドツール (`Makefile`, `justfile`, `CMakeLists.txt` => 🛠)
+  - モダンプログラミング言語・フレームワーク (`.swift`, `.kt`, `.dart`, `.lua`, `.vue`, `.svelte`, `.astro` 等)
+  - スキーマ & IaC (`.graphql`, `.prisma`, `.tf`, `.proto`, `.wasm`)
+  - フォント (`.ttf`, `.woff` 等 => 🔤) および追加画像フォーマット (`.avif`, `.psd` 等)
+  - ヘルプ表示 (`--help-icons`) およびユニットテストの同期更新。
 - 機械可読構造化データ形式への出力サポート (`--json` / `--xml`):
   - `--json`: 他ツールやプログラムから利用可能な整形済み JSON オブジェクト形式で出力。
   - `--xml`: 階層ノードとサマリー情報を含む構造化 XML 形式で出力。

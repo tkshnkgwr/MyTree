@@ -4,7 +4,7 @@
 
 use crate::config::TreeConfig;
 use crate::tree::calculate_dir_summary;
-use crate::util::match_wildcard;
+use crate::util::{match_wildcard, parse_gitignore_file};
 use std::fs;
 use std::path::Path;
 
@@ -63,6 +63,12 @@ pub fn build_tree_node(
         };
     }
 
+    let gitignore_patterns = if config.use_gitignore {
+        parse_gitignore_file(dir)
+    } else {
+        Vec::new()
+    };
+
     if let Ok(entries) = fs::read_dir(dir) {
         let mut valid_entries = Vec::new();
         for entry in entries.flatten() {
@@ -75,6 +81,7 @@ pub fn build_tree_node(
             let is_excluded = config
                 .exclude_patterns
                 .iter()
+                .chain(gitignore_patterns.iter())
                 .any(|pattern| match_wildcard(pattern, &file_name));
             if is_excluded {
                 continue;

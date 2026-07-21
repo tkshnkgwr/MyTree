@@ -23,8 +23,8 @@ MyTree [OPTIONS] [TARGET_PATH]
 
 | オプション | ロングフラグ | 引数 | デフォルト値 | 説明 |
 | :--- | :--- | :--- | :--- | :--- |
-| `-h` | `--help` | なし | - | ヘルプ表示（カテゴリ別グループ化表記 `MyTree v0.1.0` を最上部に含む）後、終了コード `0` で終了。 |
-| `-v` | `--version` | なし | - | バージョン情報 (`MyTree v0.1.0`) を標準出力に表示後、終了コード `0` で終了。 |
+| `-h` | `--help` | なし | - | ヘルプ表示（カテゴリ別グループ化表記）後、終了コード `0` で終了。 |
+| `-v` | `--version` | なし | - | バージョン情報を標準出力に表示後、終了コード `0` で終了。 |
 | | `--help-icons` | なし | - | ファイル名・拡張子・フォルダと絵文字アイコンの対応一覧表 (`icon::print_icons_help`) を標準出力に表示後、終了コード `0` で終了。 |
 | `-c` | `--classic` | なし | `false` | クラシック表示モード。ANSIカラー無効、アイコン非表示、ファイルサイズ非表示、枝記号をASCII記号 (`+-- `, `\-- `, `|   `) で出力する。 |
 | `-i` | `--icons` | なし | `true` (標準) | ディレクトリおよびファイル種別ごとの絵文字アイコンを表示する。 |
@@ -35,6 +35,7 @@ MyTree [OPTIONS] [TARGET_PATH]
 | | `--json` | なし | `false` | 構造化データとして整形された JSON 形式でツリーを出力する。 |
 | | `--xml` | なし | `false` | 構造化データとして XML 形式でツリーを出力する。 |
 | `-a` | `--all` | なし | `false` | ドット (`.`) から始まる隠しファイル・ディレクトリを表示に含める。 |
+| `-g` | `--gitignore` | なし | `false` | `.gitignore` ファイルから除外パターンを自動読み込みして適用する。 |
 | `-d` | `--depth` | `<DEPTH>` (usize) | `0` (無制限) | ツリー探索の最大階層深さを制限する。 |
 | `-e` | `--exclude` | `<PATTERNS>` (String) | `"target,node_modules,.git"` | 除外するディレクトリ名またはワイルドカードパターン (`*`, `?`) をカンマ区切りで指定する。 |
 
@@ -57,6 +58,7 @@ struct TreeConfig {
     exclude_patterns: Vec<String>, // デフォルト: ["target", "node_modules", ".git"]
     classic_mode: bool,          // デフォルト: false (クラシックモードオプション指定時有効化)
     output_format: OutputFormat, // デフォルト: OutputFormat::Text
+    use_gitignore: bool,         // デフォルト: false (.gitignore読み込み指定時有効化)
 }
 ```
 
@@ -86,39 +88,55 @@ struct TreeConfig {
 - `target` / `build` / `dist` / `out` => `🔨`
 - `node_modules` / `vendor` => `📦`
 - `.git` / `.github` => `🐙`
+- `docs` / `doc` => `📚`
+- `.vscode` / `.idea` => `💡`
+- `public` / `assets` / `static` => `🖼`
 - その他ディレクトリ => `📁`
 
 #### ファイル・拡張子
-- プログラミング言語:
+- プログラミング言語 & Web:
   - `.rs` => `🦀` (Rust)
   - `.py`, `.pyw` => `🐍` (Python)
   - `.js`, `.jsx`, `.ts`, `.tsx`, `.mjs`, `.cjs` => `🟨` (JavaScript / TypeScript)
+  - `.vue` => `💚` (Vue)
+  - `.svelte` => `🟧` (Svelte)
+  - `.astro` => `🚀` (Astro)
   - `.go` => `🐹` (Go)
   - `.rb` => `💎` (Ruby)
   - `.java`, `.jar`, `.class` => `☕` (Java)
+  - `.swift` => `🦅` (Swift)
+  - `.kt`, `.kts` => `🟪` (Kotlin)
+  - `.dart` => `🎯` (Dart)
+  - `.lua` => `🌙` (Lua)
   - `.c`, `.cpp`, `.h`, `.hpp`, `.cs` => `⚙` (C / C++ / C#)
   - `.php` => `🐘` (PHP)
-- データベース & SQL:
-  - `.sql`, `.db`, `.sqlite`, `.sqlite3` => `💾`
+- データベース & スキーマ & IaC:
+  - `.sql`, `.db`, `.sqlite`, `.sqlite3` => `💾` (Database)
+  - `.graphql`, `.gql`, `.prisma` => `🔷` (GraphQL / Prisma)
+  - `.tf`, `.tfvars` => `🏗` (Terraform)
+  - `.proto`, `.wasm` => `⚡` (Protobuf / WebAssembly)
 - Office ドキュメント & 表計算:
   - `.xlsx`, `.xls`, `.csv`, `.tsv` => `📊` (Excel / 表計算)
   - `.docx`, `.doc` => `📘` (Word)
   - `.pptx`, `.ppt` => `📙` (PowerPoint)
   - `.pdf` => `📕` (PDF)
-- テキスト & ドキュメント & 設定:
+- テキスト & ドキュメント & 設定 & ロック:
   - `.txt`, `.text`, `.log` => `📜` (テキスト / ログ)
   - `.md`, `.markdown` => `📝` (Markdown)
   - `.json`, `.jsonc` => `📄` (JSON)
   - `.toml`, `.yaml`, `.yml`, `.ini`, `.conf`, `.config` => `🔧` (設定ファイル)
+  - `.lock`, `Cargo.lock`, `package-lock.json`, `yarn.lock`, `pnpm-lock.yaml` => `🔒` (ロックファイル)
+  - `Makefile`, `justfile`, `CMakeLists.txt` => `🛠` (ビルドツール)
   - `.env*` => `🔑` (環境変数)
   - `.gitignore`, `.dockerignore` => `🙈` (無視リスト)
   - `Dockerfile`, `docker-compose*` => `🐳` (Docker)
 - 実行ファイル & スクリプト:
-  - `.exe`, `.bat`, `.cmd`, `.sh`, `.ps1` => `🚀`
+  - `.exe`, `.bat`, `.cmd`, `.sh`, `.ps1`, `.zsh`, `.bash`, `.fish` => `🚀`
 - アーカイブ (圧縮):
   - `.zip`, `.tar`, `.gz`, `.7z`, `.rar`, `.bz2`, `.xz` => `📦`
-- メディア:
-  - 画像 (`.png`, `.jpg`, `.jpeg`, `.gif`, `.svg`, `.webp`, `.ico`, `.bmp`) => `🖼`
+- フォント & メディア:
+  - フォント (`.ttf`, `.otf`, `.woff`, `.woff2`, `.eot`) => `🔤`
+  - 画像 (`.png`, `.jpg`, `.jpeg`, `.gif`, `.svg`, `.webp`, `.ico`, `.bmp`, `.avif`, `.heic`, `.psd`, `.ai`) => `🖼`
   - 音声 (`.mp3`, `.wav`, `.flac`, `.aac`, `.ogg`, `.m4a`) => `🎵`
   - 動画 (`.mp4`, `.avi`, `.mkv`, `.mov`, `.webm`, `.wmv`) => `🎬`
 - その他未定義ファイル => `📄`
@@ -137,7 +155,7 @@ struct TreeConfig {
 | :--- | :--- | :--- |
 | 正常終了 | なし | `0` |
 | `--help` 呼び出し | ヘルプ表示 (カテゴリ別・バージョン情報含む) | `0` |
-| `--version` 呼び出し | バージョン表示 (`MyTree v0.1.0`) | `0` |
+| `--version` 呼び出し | バージョン表示 | `0` |
 | `--help-icons` 呼び出し | アイコン対応一覧表示 (`icon::print_icons_help`) | `0` |
 | 未知のオプション指定 | `【エラー】: 不明なオプションです: <ARG>` | `1` |
 | パスが存在しない | `【エラー】: 指定されたパスが存在しません: <PATH>` | `1` |
