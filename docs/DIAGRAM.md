@@ -57,22 +57,31 @@ flowchart TD
 sequenceDiagram
     autonumber
     participant CLI as ユーザー (CLI)
-    participant Main as main()
-    participant ArgParser as parse_arguments()
-    participant WinAPI as enable_ansi_support()
-    participant Engine as print_tree()
-    participant Helper as get_icon_emoji() / format_byte_size()
+    participant Main as main() (main.rs)
+    participant Config as config.rs (parse_arguments)
+    participant Tree as tree.rs (print_tree)
+    participant Serializer as serializer.rs (build_tree_node)
+    participant Util as util.rs (match_wildcard / format_byte_size)
+    participant Icon as icon.rs (get_icon_emoji)
 
-    CLI->>Main: コマンド実行 (例: MyTree -s -i -d 2)
-    Main->>WinAPI: Win32 API 呼び出し (Virtual Terminal Processing)
-    Main->>ArgParser: 引数配列 (args) の解析
-    ArgParser-->>Main: TreeConfig オブジェクト
-    Main->>Engine: 初期パス, 深度0, 接頭辞配列, TreeConfig
-    loop 各階層の再帰処理
-        Engine->>Engine: fs::read_dir() でエントリ読み込み & フィルタ
-        Engine->>Helper: アイコン絵文字およびサイズ整形文字列の取得
-        Helper-->>Engine: 絵文字・サイズ文字列
-        Engine->>CLI: ツリー行を標準出力に出力
+    CLI->>Main: コマンド実行 (例: MyTree --json -d 2)
+    Main->>Main: enable_ansi_support() (Windows API)
+    Main->>Config: parse_arguments(args, &mut config)
+    Config-->>Main: Ok(()) / TreeConfig オブジェクト
+    
+    alt テキスト出力 (OutputFormat::Text)
+        Main->>Tree: print_tree(target_path, depth, prefixes, config, ...)
+        loop 各階層の再帰処理
+            Tree->>Util: match_wildcard(pattern, file_name)
+            Tree->>Icon: get_icon_emoji(file_name, is_dir)
+            Tree->>Util: format_byte_size(size)
+            Tree->>CLI: 標準出力へのツリー行描画
+        end
+    else JSON / XML 出力 (OutputFormat::Json / Xml)
+        Main->>Serializer: build_tree_node(target_path, depth, config, ...)
+        Serializer->>Util: match_wildcard(pattern, file_name)
+        Serializer-->>Main: TreeNode 構造体
+        Main->>Serializer: serialize_json() / serialize_xml()
+        Serializer->>CLI: 標準出力への構造化データ出力
     end
-    Main->>CLI: ディレクトリ数・ファイル数サマリーの出力
 ```

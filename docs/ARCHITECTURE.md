@@ -10,18 +10,34 @@
 
 ```text
 src/
-├── main.rs                     # エントリポイント & CLI引数パース & ディレクトリ描画
+├── main.rs                     # エントリポイント & Windows ANSI制御
+├── config.rs                   # CLI引数パース & 設定構造体 (TreeConfig, OutputFormat)
+├── tree.rs                     # ディレクトリ探索 & テキストツリー描画コアエンジン
+├── serializer.rs               # JSON / XML 構造化データシリアライザエンジン
+├── util.rs                     # 汎用ヘルパー関数 (ワイルドカード検索, バイト表示)
 └── icon.rs                     # アイコン絵文字判定モジュール (ファイル名/拡張子マッピング)
 ```
 
 ### 1.1 モジュール役割
 - **`src/main.rs`**:
-  - `main()`: エントリポイント
+  - `main()`: エントリポイントおよび全体フローマッチング
   - `enable_ansi_support()`: Windows ANSIエスケープ有効化 (Win32 API FFI)
-  - `parse_arguments()` / `print_version()` / `print_help()`: CLIオプションパースおよび出力
-  - `print_tree()`: 再帰的ディレクトリ探索および構造ツリー出力エンジン
+- **`src/config.rs`**:
+  - `TreeConfig`, `OutputFormat`: オプション設定構造体・フォーマット定義
+  - `parse_arguments()` / `print_version()` / `print_help()`: CLIオプションパースおよびヘルプ出力
+- **`src/tree.rs`**:
+  - `print_tree()`: 再帰的ディレクトリ探索および標準構造ツリー描画
+  - `format_root_line()` / `calculate_dir_summary()`: ルート行生成およびフォルダ容量・ファイル数集計
+- **`src/serializer.rs`**:
+  - `TreeNode`: メモリ内階層データ構造モデル
+  - `build_tree_node()`: 階層ツリー構築関数
+  - `serialize_json()` / `serialize_xml()`: 手動構造化シリアライザエンジン
+  - `escape_json_str()` / `escape_xml_str()`: 特殊文字エスケープ
+- **`src/util.rs`**:
+  - `match_wildcard()`: ワイルドカード (*, ?) パターンマッチ処理
+  - `format_byte_size()`: ファイルサイズ単位換算表記
 - **`src/icon.rs`**:
-  - `get_icon_emoji()`: 拡張子・ファイル名・ディレクトリ名に応じた絵文字マッピングエンジン（および同モジュール内ユニットテスト）
+  - `get_icon_emoji()`: 拡張子・ファイル名・ディレクトリ名に応じた絵文字マッピングエンジン
 
 ---
 
