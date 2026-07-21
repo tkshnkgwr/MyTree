@@ -1,11 +1,13 @@
 [package]
-name = "tree-rs"
+name = "MyTree"
 version = "0.1.0"
 edition = "2021"
-authors = ["Your Name <you@example.com>"]
-description = "A simple, highly customizable Tree CLI utility for Windows"
+authors = ["MyTree Contributors"]
+description = "A simple, highly customizable Tree CLI utility for Windows built with Rust standard library."
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/tkshnkgwr/MyTree"
 
 # No external dependencies are required! 
 # This keeps the binary lightweight, fast-compiling, and highly compatible.
 [dependencies]
-# We can enable colored terminal output on Windows standard console.
