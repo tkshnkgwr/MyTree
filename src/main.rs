@@ -13,6 +13,14 @@ use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
 
+/// 出力フォーマットの定義
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum OutputFormat {
+    Text,
+    Json,
+    Xml,
+}
+
 /// ツールでサポートする設定オプション
 #[derive(Debug, Clone)]
 struct TreeConfig {
@@ -24,6 +32,7 @@ struct TreeConfig {
     max_depth: usize,
     exclude_patterns: Vec<String>,
     classic_mode: bool,
+    output_format: OutputFormat,
 }
 
 impl Default for TreeConfig {
@@ -40,8 +49,19 @@ impl Default for TreeConfig {
                 .map(String::from)
                 .collect(),
             classic_mode: false,
+            output_format: OutputFormat::Text,
         }
     }
+}
+
+/// 機械可読フォーマット出力用のメモリ内ツリーノード構造体
+#[derive(Debug, Clone)]
+struct TreeNode {
+    name: String,
+    path: String,
+    is_dir: bool,
+    size: u64,
+    children: Vec<TreeNode>,
 }
 
 fn main() {
@@ -68,31 +88,59 @@ fn main() {
         std::process::exit(1);
     }
 
-    // 2. ツリー出力の開始
-    println!("{}", format_root_line(&config));
+    // 2. 出力処理の分岐
+    match config.output_format {
+        OutputFormat::Text => {
+            println!("{}", format_root_line(&config));
 
-    let mut dir_count = 0;
-    let mut file_count = 0;
+            let mut dir_count = 0;
+            let mut file_count = 0;
 
-    // 再帰的にツリーを描画
-    print_tree(
-        &config.target_path,
-        0,
-        &mut Vec::new(),
-        &config,
-        &mut dir_count,
-        &mut file_count,
-    );
+            // 再帰的にツリーを描画
+            print_tree(
+                &config.target_path,
+                0,
+                &mut Vec::new(),
+                &config,
+                &mut dir_count,
+                &mut file_count,
+            );
 
-    // 3. 最終集計の出力
-    println!();
-    if config.classic_mode {
-        println!("{} directories, {} files", dir_count, file_count);
-    } else {
-        println!(
-            "\x1b[36m{} directories, {} files\x1b[0m",
-            dir_count, file_count
-        );
+            // 最終集計の出力
+            println!();
+            if config.classic_mode {
+                println!("{} directories, {} files", dir_count, file_count);
+            } else {
+                println!(
+                    "\x1b[36m{} directories, {} files\x1b[0m",
+                    dir_count, file_count
+                );
+            }
+        }
+        OutputFormat::Json => {
+            let mut dir_count = 0;
+            let mut file_count = 0;
+            let root = build_tree_node(
+                &config.target_path,
+                0,
+                &config,
+                &mut dir_count,
+                &mut file_count,
+            );
+            println!("{}", serialize_json(&root, dir_count, file_count));
+        }
+        OutputFormat::Xml => {
+            let mut dir_count = 0;
+            let mut file_count = 0;
+            let root = build_tree_node(
+                &config.target_path,
+                0,
+                &config,
+                &mut dir_count,
+                &mut file_count,
+            );
+            println!("{}", serialize_xml(&root, dir_count, file_count));
+        }
     }
 }
 
@@ -138,6 +186,12 @@ fn parse_arguments(args: &[String], config: &mut TreeConfig) -> Result<(), Strin
             }
             "-a" | "--all" => {
                 config.show_hidden = true;
+            }
+            "--json" => {
+                config.output_format = OutputFormat::Json;
+            }
+            "--xml" => {
+                config.output_format = OutputFormat::Xml;
             }
             "-d" | "--depth" => {
                 if i + 1 < args.len() {
@@ -202,6 +256,9 @@ fn print_help() {
   -s, --sizes                ファイルサイズを表示 ([1.2 KB] 等) [デフォルト: 有効]\n  \
   -S, --no-sizes             ファイルサイズを非表示\n  \
   -D, --dir-sizes, --du      フォルダ配下の総ファイル数および総容量を集計表示 [デフォルト: 無効]\n\n  \
+\x1b[36m【出力フォーマット】\x1b[0m\n  \
+  --json                     構造化データとしてJSON形式で出力\n  \
+  --xml                      構造化データとしてXML形式で出力\n\n  \
 \x1b[36m【フィルタリング・探索制御】\x1b[0m\n  \
   -a, --all                  隠しファイル・ディレクトリ (ドット開始) も表示 [デフォルト: 無効]\n  \
   -d, --depth <DEPTH>        探索する最大の階層深さを制限 (例: -d 2) [デフォルト: 無制限]\n  \
@@ -288,7 +345,250 @@ fn calculate_dir_summary(dir: &Path, config: &TreeConfig) -> (u64, usize) {
     (total_size, total_files)
 }
 
-/// 再帰的なツリー構築コア処理
+/// 再帰的にインメモリ TreeNode 階層構造を構築する
+fn build_tree_node(
+    dir: &Path,
+    current_depth: usize,
+    config: &TreeConfig,
+    dir_count: &mut usize,
+    file_count: &mut usize,
+) -> TreeNode {
+    let name = dir
+        .file_name()
+        .and_then(|n| n.to_str())
+        .unwrap_or(".")
+        .to_string();
+
+    let path_str = dir.to_string_lossy().replace('\\', "/");
+    let is_dir = dir.is_dir();
+
+    if !is_dir {
+        *file_count += 1;
+        let size = fs::metadata(dir).map(|m| m.len()).unwrap_or(0);
+        return TreeNode {
+            name,
+            path: path_str,
+            is_dir: false,
+            size,
+            children: Vec::new(),
+        };
+    }
+
+    *dir_count += 1;
+
+    let mut children = Vec::new();
+
+    // 深度制限のチェック
+    if config.max_depth > 0 && current_depth >= config.max_depth {
+        let (total_size, _) = calculate_dir_summary(dir, config);
+        return TreeNode {
+            name,
+            path: path_str,
+            is_dir: true,
+            size: total_size,
+            children,
+        };
+    }
+
+    if let Ok(entries) = fs::read_dir(dir) {
+        let mut valid_entries = Vec::new();
+        for entry in entries.flatten() {
+            let file_name = entry.file_name().to_string_lossy().into_owned();
+
+            if file_name.starts_with('.') && !config.show_hidden {
+                continue;
+            }
+
+            let is_excluded = config
+                .exclude_patterns
+                .iter()
+                .any(|pattern| match_wildcard(pattern, &file_name));
+            if is_excluded {
+                continue;
+            }
+
+            valid_entries.push(entry);
+        }
+
+        // ソート処理 (ディレクトリを優先ソート)
+        valid_entries.sort_by(|a, b| {
+            let name_a = a.file_name();
+            let name_b = b.file_name();
+
+            let is_dir_a = a.path().is_dir();
+            let is_dir_b = b.path().is_dir();
+
+            if is_dir_a != is_dir_b {
+                if is_dir_a {
+                    std::cmp::Ordering::Less
+                } else {
+                    std::cmp::Ordering::Greater
+                }
+            } else {
+                name_a.cmp(&name_b)
+            }
+        });
+
+        for entry in valid_entries {
+            let entry_path = entry.path();
+            if entry_path.is_dir() {
+                children.push(build_tree_node(
+                    &entry_path,
+                    current_depth + 1,
+                    config,
+                    dir_count,
+                    file_count,
+                ));
+            } else {
+                *file_count += 1;
+                let file_name = entry.file_name().to_string_lossy().into_owned();
+                let file_path_str = entry_path.to_string_lossy().replace('\\', "/");
+                let size = entry.metadata().map(|m| m.len()).unwrap_or(0);
+                children.push(TreeNode {
+                    name: file_name,
+                    path: file_path_str,
+                    is_dir: false,
+                    size,
+                    children: Vec::new(),
+                });
+            }
+        }
+    }
+
+    let total_size = children.iter().map(|c| c.size).sum();
+
+    TreeNode {
+        name,
+        path: path_str,
+        is_dir: true,
+        size: total_size,
+        children,
+    }
+}
+
+/// JSON用文字列エスケープ
+fn escape_json_str(s: &str) -> String {
+    let mut escaped = String::with_capacity(s.len());
+    for c in s.chars() {
+        match c {
+            '"' => escaped.push_str("\\\""),
+            '\\' => escaped.push_str("\\\\"),
+            '\n' => escaped.push_str("\\n"),
+            '\r' => escaped.push_str("\\r"),
+            '\t' => escaped.push_str("\\t"),
+            c if c.is_control() => {
+                escaped.push_str(&format!("\\u{:04x}", c as u32));
+            }
+            c => escaped.push(c),
+        }
+    }
+    escaped
+}
+
+/// XML用エンティティエスケープ
+fn escape_xml_str(s: &str) -> String {
+    let mut escaped = String::with_capacity(s.len());
+    for c in s.chars() {
+        match c {
+            '&' => escaped.push_str("&amp;"),
+            '<' => escaped.push_str("&lt;"),
+            '>' => escaped.push_str("&gt;"),
+            '"' => escaped.push_str("&quot;"),
+            '\'' => escaped.push_str("&apos;"),
+            c => escaped.push(c),
+        }
+    }
+    escaped
+}
+
+/// TreeNode 階層を JSON フォーマット文字列へ手動シリアライズ
+fn serialize_json(root: &TreeNode, dir_count: usize, file_count: usize) -> String {
+    let mut out = String::new();
+    out.push_str("{\n");
+    serialize_json_node(root, 1, &mut out);
+    out.push_str(",\n  \"summary\": {\n");
+    out.push_str(&format!("    \"directories\": {},\n", dir_count));
+    out.push_str(&format!("    \"files\": {}\n", file_count));
+    out.push_str("  }\n}");
+    out
+}
+
+fn serialize_json_node(node: &TreeNode, indent_level: usize, out: &mut String) {
+    let indent = "  ".repeat(indent_level);
+    let node_type = if node.is_dir { "directory" } else { "file" };
+
+    out.push_str(&format!("{}\"type\": \"{}\",\n", indent, node_type));
+    out.push_str(&format!(
+        "{}\"name\": \"{}\",\n",
+        indent,
+        escape_json_str(&node.name)
+    ));
+    out.push_str(&format!(
+        "{}\"path\": \"{}\",\n",
+        indent,
+        escape_json_str(&node.path)
+    ));
+    out.push_str(&format!("{}\"size\": {}", indent, node.size));
+
+    if node.is_dir {
+        out.push_str(",\n");
+        out.push_str(&format!("{}\"children\": [\n", indent));
+        for (idx, child) in node.children.iter().enumerate() {
+            let child_indent = "  ".repeat(indent_level + 1);
+            out.push_str(&format!("{}{{\n", child_indent));
+            serialize_json_node(child, indent_level + 2, out);
+            out.push('\n');
+            if idx < node.children.len() - 1 {
+                out.push_str(&format!("{}}},\n", child_indent));
+            } else {
+                out.push_str(&format!("{}}}\n", child_indent));
+            }
+        }
+        out.push_str(&format!("{}]", indent));
+    }
+}
+
+/// TreeNode 階層を XML フォーマット文字列へ手動シリアライズ
+fn serialize_xml(root: &TreeNode, dir_count: usize, file_count: usize) -> String {
+    let mut out = String::new();
+    out.push_str("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+    out.push_str("<tree>\n");
+    serialize_xml_node(root, 1, &mut out);
+    out.push_str(&format!(
+        "  <summary directories=\"{}\" files=\"{}\" />\n",
+        dir_count, file_count
+    ));
+    out.push_str("</tree>");
+    out
+}
+
+fn serialize_xml_node(node: &TreeNode, indent_level: usize, out: &mut String) {
+    let indent = "  ".repeat(indent_level);
+    let node_type = if node.is_dir { "directory" } else { "file" };
+
+    out.push_str(&format!(
+        "{}<node type=\"{}\" name=\"{}\" path=\"{}\" size=\"{}\"",
+        indent,
+        node_type,
+        escape_xml_str(&node.name),
+        escape_xml_str(&node.path),
+        node.size
+    ));
+
+    if node.is_dir && !node.children.is_empty() {
+        out.push_str(">\n");
+        out.push_str(&format!("{}  <children>\n", indent));
+        for child in &node.children {
+            serialize_xml_node(child, indent_level + 2, out);
+        }
+        out.push_str(&format!("{}  </children>\n", indent));
+        out.push_str(&format!("{}</node>\n", indent));
+    } else {
+        out.push_str(" />\n");
+    }
+}
+
+/// 再帰的なツリー構築コア処理 (標準テキスト表示)
 fn print_tree(
     dir: &Path,
     current_depth: usize,
@@ -591,6 +891,7 @@ mod tests {
         assert!(config.show_sizes);
         assert!(!config.show_hidden);
         assert_eq!(config.max_depth, 0);
+        assert_eq!(config.output_format, OutputFormat::Text);
     }
 
     #[test]
@@ -635,6 +936,63 @@ mod tests {
         assert!(config.classic_mode);
         assert!(!config.show_icons);
         assert!(!config.show_sizes);
+    }
+
+    #[test]
+    fn test_parse_arguments_json_xml() {
+        let args_json = vec!["MyTree".to_string(), "--json".to_string()];
+        let mut config = TreeConfig::default();
+        assert!(parse_arguments(&args_json, &mut config).is_ok());
+        assert_eq!(config.output_format, OutputFormat::Json);
+
+        let args_xml = vec!["MyTree".to_string(), "--xml".to_string()];
+        let mut config = TreeConfig::default();
+        assert!(parse_arguments(&args_xml, &mut config).is_ok());
+        assert_eq!(config.output_format, OutputFormat::Xml);
+    }
+
+    #[test]
+    fn test_escape_json_str() {
+        assert_eq!(escape_json_str("hello \"world\""), "hello \\\"world\\\"");
+        assert_eq!(escape_json_str("path\\to\\file"), "path\\\\to\\\\file");
+        assert_eq!(escape_json_str("line1\nline2"), "line1\\nline2");
+    }
+
+    #[test]
+    fn test_escape_xml_str() {
+        assert_eq!(
+            escape_xml_str("a & b < c > d \"e\" 'f'"),
+            "a &amp; b &lt; c &gt; d &quot;e&quot; &apos;f&apos;"
+        );
+    }
+
+    #[test]
+    fn test_serialize_json_and_xml() {
+        let node = TreeNode {
+            name: "root".to_string(),
+            path: ".".to_string(),
+            is_dir: true,
+            size: 100,
+            children: vec![TreeNode {
+                name: "file.txt".to_string(),
+                path: "./file.txt".to_string(),
+                is_dir: false,
+                size: 100,
+                children: Vec::new(),
+            }],
+        };
+
+        let json = serialize_json(&node, 1, 1);
+        assert!(json.contains("\"type\": \"directory\""));
+        assert!(json.contains("\"name\": \"root\""));
+        assert!(json.contains("\"name\": \"file.txt\""));
+        assert!(json.contains("\"directories\": 1"));
+
+        let xml = serialize_xml(&node, 1, 1);
+        assert!(xml.contains("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"));
+        assert!(xml.contains("<node type=\"directory\" name=\"root\""));
+        assert!(xml.contains("<node type=\"file\" name=\"file.txt\""));
+        assert!(xml.contains("<summary directories=\"1\" files=\"1\" />"));
     }
 
     #[test]

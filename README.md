@@ -59,6 +59,12 @@ MyTree -c
 # Display total files and total size for directories
 MyTree -D
 
+# Output tree as JSON structured data
+MyTree --json
+
+# Output tree as XML structured data
+MyTree --xml
+
 # Display version information
 MyTree -v
 
@@ -85,6 +91,8 @@ MyTree -e "*.log,*.tmp,target"
 | `-s` | `--sizes` | **Enabled** | Display file size (`B`, `KB`, `MB`) |
 | `-S` | `--no-sizes` | - | Disable file size display |
 | `-D` | `--dir-sizes`, `--du` | Disabled | Display total file count and size for directories |
+| | `--json` | Disabled | Output tree as JSON structured data |
+| | `--xml` | Disabled | Output tree as XML structured data |
 | `-a` | `--all` | Disabled | Show hidden files and directories starting with `.` |
 | `-d <DEPTH>` | `--depth <DEPTH>` | Unlimited | Set maximum recursion depth (e.g., `-d 2`) |
 | `-e <PAT>` | `--exclude <PAT>` | `"target,node_modules,.git"` | Exclude directory names or wildcard patterns |

@@ -16,8 +16,9 @@ flowchart TD
     ParseArgs -->|解析成功| CheckPath{ターゲットパスの存在確認}
     
     CheckPath -->|存在しない| PathErrExit[指定パス不存在エラー & 終了]
-    CheckPath -->|存在| PrintRoot[ルートディレクトリ行を出力]
+    CheckPath -->|存在| CheckFormat{output_format}
     
+    CheckFormat -->|Text| PrintRoot[ルートディレクトリ行を出力]
     PrintRoot --> PrintTree[print_tree<br/>再帰ツリー描画を開始]
     
     subgraph TreeRecursion [ツリー再帰処理: print_tree]
@@ -30,7 +31,7 @@ flowchart TD
         
         FilterEntries --> SortEntries
         SortEntries --> LoopEntries
-        LoopEntries --> RenderLine
+        SortEntries --> RenderLine
         RenderLine --> IsSubDir
         IsSubDir -->|Yes| RecurseSub
         IsSubDir -->|No| NextEntry[次のエントリーへ]
@@ -39,7 +40,13 @@ flowchart TD
     
     PrintTree --> TreeRecursion
     TreeRecursion --> PrintSummary[最終集計を出力<br/>X directories, Y files]
+
+    CheckFormat -->|Json| BuildTreeJson[build_tree_node & serialize_json<br/>JSONオブジェクト出力]
+    CheckFormat -->|Xml| BuildTreeXml[build_tree_node & serialize_xml<br/>XMLツリー出力]
+
     PrintSummary --> End([終了: 0])
+    BuildTreeJson --> End
+    BuildTreeXml --> End
 ```
 
 ---

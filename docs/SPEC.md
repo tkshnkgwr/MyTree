@@ -32,6 +32,8 @@ MyTree [OPTIONS] [TARGET_PATH]
 | `-s` | `--sizes` | なし | `true` (標準) | ファイル名の横にファイルサイズ (`[1.2 KB]` 等) を表示する。 |
 | `-S` | `--no-sizes` | なし | `false` | ファイルサイズを非表示にする。 |
 | `-D` | `--dir-sizes`, `--du` | なし | `false` | フォルダ名の横に、そのフォルダ配下の総ファイル数および総容量 (`[15 files, 4.2 MB]` 等) を集計・表示する。 |
+| | `--json` | なし | `false` | 構造化データとして整形された JSON 形式でツリーを出力する。 |
+| | `--xml` | なし | `false` | 構造化データとして XML 形式でツリーを出力する。 |
 | `-a` | `--all` | なし | `false` | ドット (`.`) から始まる隠しファイル・ディレクトリを表示に含める。 |
 | `-d` | `--depth` | `<DEPTH>` (usize) | `0` (無制限) | ツリー探索の最大階層深さを制限する。 |
 | `-e` | `--exclude` | `<PATTERNS>` (String) | `"target,node_modules,.git"` | 除外するディレクトリ名またはワイルドカードパターン (`*`, `?`) をカンマ区切りで指定する。 |
@@ -39,6 +41,12 @@ MyTree [OPTIONS] [TARGET_PATH]
 ### 2.3 デフォルト設定構造体 (`TreeConfig`)
 
 ```rust
+enum OutputFormat {
+    Text,
+    Json,
+    Xml,
+}
+
 struct TreeConfig {
     target_path: PathBuf,        // デフォルト: "."
     show_icons: bool,            // デフォルト: true
@@ -48,6 +56,7 @@ struct TreeConfig {
     max_depth: usize,            // デフォルト: 0 (無制限)
     exclude_patterns: Vec<String>, // デフォルト: ["target", "node_modules", ".git"]
     classic_mode: bool,          // デフォルト: false (クラシックモードオプション指定時有効化)
+    output_format: OutputFormat, // デフォルト: OutputFormat::Text
 }
 ```
 

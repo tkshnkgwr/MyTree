@@ -63,3 +63,27 @@ valid_entries.sort_by(|a, b| {
 
 ### 3.2 枝記号インデント制御
 再帰呼び出し時に `prefixes: &mut Vec<&str>` をスタック渡しすることにより、不必要な文字列結合やヒープ確保を回避しながら正しい階層境界線 (`│   ` または `    `) を描画します。
+
+---
+
+## 4. 機械可読データシリアライズ設計 (`--json` / `--xml`)
+
+`serde` や `quick-xml` などの外部シリアライズクレートを導入せず、`std` のみで JSON / XML 構造を出力するための階層モデルと文字列エスケープ機構を備えています。
+
+### 4.1 メモリ内ツリーモデル (`TreeNode`)
+`build_tree_node()` 関数が再帰的にディレクトリを巡回し、フィルタ・ソート適用済みのインメモリツリー構造体を生成します。
+
+```rust
+struct TreeNode {
+    name: String,
+    path: String,
+    is_dir: bool,
+    size: u64,
+    children: Vec<TreeNode>,
+}
+```
+
+### 4.2 文字エスケープ関数 (`escape_json_str` / `escape_xml_str`)
+- **JSON**: ダブルクォート (`\"`)、バックスラッシュ (`\\`)、制御文字 (`\n`, `\r`, `\t`, `\uXXXX`) を安全にエスケープ。
+- **XML**: 特殊エンティティ文字 (`&amp;`, `&lt;`, `&gt;`, `&quot;`, `&apos;`) をエスケープ。
+
