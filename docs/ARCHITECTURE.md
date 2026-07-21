@@ -103,3 +103,17 @@ struct TreeNode {
 - **JSON**: ダブルクォート (`\"`)、バックスラッシュ (`\\`)、制御文字 (`\n`, `\r`, `\t`, `\uXXXX`) を安全にエスケープ。
 - **XML**: 特殊エンティティ文字 (`&amp;`, `&lt;`, `&gt;`, `&quot;`, `&apos;`) をエスケープ。
 
+---
+
+## 5. CI/CD パイプライン構成 (GitHub Actions)
+
+本プロジェクトでは、コード品質の自動検証およびリリース配布の自動化のために GitHub Actions ワークフローを導入しています。
+
+### 5.1 CI ワークフロー (`.github/workflows/ci.yml`)
+`main` ブランチへの Push / PR 時に自動実行されます（ドキュメント類のみの変更時は自動スキップ）。
+- **検証項目**: `cargo test`, `cargo clippy --all-targets -- -D warnings`, `cargo fmt --check`, `cargo doc`, `cargo build --release`
+
+### 5.2 Release ワークフロー (`.github/workflows/release.yml`)
+`v*` (例: `v0.1.1`, `v1.0.0`) タグの Push 時のみトリガーされる明示的なリリース自動化パイプラインです。
+- リリース用 Windows バイナリ (`MyTree.exe`) を生成・Zip 圧縮 (`MyTree-windows-x64.zip`) し、GitHub Release のアセットとして自動添付します。
+

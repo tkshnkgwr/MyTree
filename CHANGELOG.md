@@ -13,6 +13,9 @@
   - テストコードも各モジュールに適切に整理・分散配置。
 
 ### Added
+- GitHub Actions CI / Release ワークフローの構築 (`.github/workflows/`):
+  - `ci.yml`: `main` ブランチへの Push / PR 時に `cargo test`, `clippy`, `fmt`, `doc`, `build` の自動検証を実行。
+  - `release.yml`: `v*` (例: `v0.1.1`) タグ Push 時のみ動作し、Windows リリースバイナリ Zip (`MyTree-windows-x64.zip`) を生成して GitHub Release に自動デプロイ。
 - `.gitignore` ファイルの自動読み込み・除外パターン適用オプション (`-g` / `--gitignore`):
   - 外部依存ゼロ（`std::fs` のみ）による `.gitignore` パース関数 `parse_gitignore_file` の実装。
   - ディレクトリ探索および構造化データ (`--json` / `--xml`) シリアライズ時の動的パターン除外統合。

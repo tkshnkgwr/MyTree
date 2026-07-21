@@ -85,3 +85,34 @@ sequenceDiagram
         Serializer->>CLI: 標準出力への構造化データ出力
     end
 ```
+
+---
+
+## 3. GitHub Actions CI/CD フロー図
+
+```mermaid
+flowchart TD
+    subgraph Trigger [トリガー検出]
+        PushMain[push / PR to main]
+        PushTag[push tag: v*]
+    end
+
+    subgraph CI_Pipeline [CI ワークフロー: ci.yml]
+        PushMain --> CheckoutCI[actions/checkout]
+        CheckoutCI --> InstallRustCI[dtolnay/rust-toolchain]
+        InstallRustCI --> CacheCI[Swatinem/rust-cache]
+        CacheCI --> Test[cargo test]
+        Test --> Clippy[cargo clippy]
+        Clippy --> Fmt[cargo fmt --check]
+        Fmt --> Doc[cargo doc]
+        Doc --> BuildCI[cargo build --release]
+    end
+
+    subgraph Release_Pipeline [Release ワークフロー: release.yml]
+        PushTag --> CheckoutRel[actions/checkout]
+        CheckoutRel --> InstallRustRel[dtolnay/rust-toolchain]
+        InstallRustRel --> BuildRel[cargo build --release]
+        BuildRel --> Zip[Compress-Archive -> MyTree-windows-x64.zip]
+        Zip --> GHRelease[softprops/action-gh-release<br/>GitHub Release 作成 & アセット添付]
+    end
+```

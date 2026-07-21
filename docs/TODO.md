@@ -21,6 +21,9 @@
   - `-g`, `--gitignore`: `.gitignore` ファイルから除外パターンを自動読み込み・適用する機能
   - `-d`, `--depth`: ツリー探索の階層制限
   - `-e`, `--exclude`: 除外ディレクトリ名 / ワイルドカードパターンの指定
+- [x] **GitHub Actions CI/CD パイプラインの構築**:
+  - `.github/workflows/ci.yml`: `main` ブランチへの Push / PR 時に `cargo test`, `clippy`, `fmt`, `doc`, `build` を自動実行
+  - `.github/workflows/release.yml`: `v*` タグの Push 時のみ起動し、Windows Release バイナリ (`MyTree-windows-x64.zip`) を GitHub Release へ自動デプロイ
 - [x] **ワイルドカード / Glob パターン除外機能 (`match_wildcard`)**:
   - 外部ライブラリなしで `*.tmp`, `*.log`, `build*`, `test?.rs` 等のパターン除外に対応
 - [x] **JSON / XML 構造化出力フォーマット (`--json` / `--xml`)**:
@@ -30,7 +33,7 @@
   - フォルダアイコン (`docs`, `.vscode`, `public` 等) やプログラミング言語・フレームワーク (`.swift`, `.kt`, `.vue`, `.svelte` 等)・ロックファイル・フォント・メディア等の網羅的追加
 - [x] **モジュール分割リファクタリング (1,000行ルール準拠)**:
   - 単一ファイルであった `src/main.rs` を関心事ごとに 5 つのモジュール (`main.rs`, `config.rs`, `tree.rs`, `serializer.rs`, `util.rs`, `icon.rs`) に分割し高保守性を実現
-- [x] **ユニットテストの全領域への拡充**:
+- [x] **ユニットテストの全領域への拡充 (17テスト)**:
   - 引数解析、サイズフォーマット、アイコン判定、ワイルドカード、.gitignoreパース、ディレクトリ集計、JSON/XMLシリアライザ等すべてのモジュールを網羅
 - [x] **Windows 10/11 ANSIカラー出力を自動有効化** (`kernel32.dll` ダイレクト Win32 API FFI)
 - [x] **ディレクトリ優先ソート機能** (視認性の向上)
