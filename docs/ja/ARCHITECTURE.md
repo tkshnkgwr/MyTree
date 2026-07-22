@@ -1,5 +1,7 @@
 # Architecture (ARCHITECTURE.md) - MyTree
 
+[English](../en/ARCHITECTURE.md) | **日本語版**
+
 本文書は、`MyTree` (実行ファイル名: `MyTree.exe`) のシステムアーキテクチャ、モジュール設計、内部アルゴリズム、および技術選定の背景について記述します。
 
 ---
@@ -116,4 +118,3 @@ struct TreeNode {
 ### 5.2 Release ワークフロー (`.github/workflows/release.yml`)
 `v*` (例: `v0.1.1`, `v1.0.0`) タグの Push 時のみトリガーされる明示的なリリース自動化パイプラインです。
 - リリース用 Windows バイナリ (`MyTree.exe`) を生成・Zip 圧縮 (`MyTree-windows-x64.zip`) し、GitHub Release のアセットとして自動添付します。
-

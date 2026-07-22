@@ -90,12 +90,30 @@ MyTree -e "*.log,*.tmp,target"
 ```text
 📁 .
 ├── 📁 docs
-│   ├── 📝 ARCHITECTURE.md [5.3 KB]
-│   ├── 📝 DIAGRAM.md [3.6 KB]
-│   ├── 📝 FOOTPRINTS.md [1.8 KB]
-│   ├── 📝 INSTRUCTIONS.md [2.4 KB]
-│   ├── 📝 SPEC.md [7.4 KB]
-│   └── 📝 TODO.md [3.2 KB]
+│   ├── 📁 en
+│   │   ├── 📝 ARCHITECTURE.md [5.7 KB]
+│   │   ├── 📝 CHANGELOG.md [4.6 KB]
+│   │   ├── 📝 CONTRIBUTING.md [1.7 KB]
+│   │   ├── 📝 DIAGRAM.md [4.4 KB]
+│   │   ├── 📝 FOOTPRINTS.md [1.8 KB]
+│   │   ├── 📝 INSTRUCTIONS.md [2.1 KB]
+│   │   ├── 📝 RELEASE.md [1.6 KB]
+│   │   ├── 📝 SECURITY.md [1.7 KB]
+│   │   ├── 📝 SPEC.md [8.5 KB]
+│   │   ├── 📝 TESTING.md [1.9 KB]
+│   │   └── 📝 TODO.md [3.6 KB]
+│   └── 📁 ja
+│       ├── 📝 ARCHITECTURE.md [6.4 KB]
+│       ├── 📝 CHANGELOG.md [6.3 KB]
+│       ├── 📝 CONTRIBUTING.md [2.3 KB]
+│       ├── 📝 DIAGRAM.md [4.7 KB]
+│       ├── 📝 FOOTPRINTS.md [2.1 KB]
+│       ├── 📝 INSTRUCTIONS.md [2.5 KB]
+│       ├── 📝 RELEASE.md [2.0 KB]
+│       ├── 📝 SECURITY.md [2.2 KB]
+│       ├── 📝 SPEC.md [9.8 KB]
+│       ├── 📝 TESTING.md [2.4 KB]
+│       └── 📝 TODO.md [4.5 KB]
 ├── 📂 src
 │   ├── 🦀 config.rs [10.0 KB]
 │   ├── 🦀 icon.rs [6.4 KB]
@@ -103,26 +121,44 @@ MyTree -e "*.log,*.tmp,target"
 │   ├── 🦀 serializer.rs [9.5 KB]
 │   ├── 🦀 tree.rs [7.7 KB]
 │   └── 🦀 util.rs [2.6 KB]
-├── 📝 CHANGELOG.md [4.5 KB]
+├── 📝 CHANGELOG.md [340 B]
 ├── 📄 Cargo.lock [150 B]
 ├── 🔧 Cargo.toml [426 B]
 ├── 📄 LICENSE [1.1 KB]
-├── 📝 README.md [3.8 KB]
-└── 📝 README_JA.md [5.4 KB]
+├── 📝 README.md [6.4 KB]
+└── 📝 README_JA.md [8.2 KB]
 
-2 directories, 18 files
+4 directories, 34 files
 ```
 
 #### Classic Mode (`MyTree -c`)
 ```text
 .
 +-- docs
-|   +-- ARCHITECTURE.md
-|   +-- DIAGRAM.md
-|   +-- FOOTPRINTS.md
-|   +-- INSTRUCTIONS.md
-|   +-- SPEC.md
-|   \-- TODO.md
+|   +-- en
+|   |   +-- ARCHITECTURE.md
+|   |   +-- CHANGELOG.md
+|   |   +-- CONTRIBUTING.md
+|   |   +-- DIAGRAM.md
+|   |   +-- FOOTPRINTS.md
+|   |   +-- INSTRUCTIONS.md
+|   |   +-- RELEASE.md
+|   |   +-- SECURITY.md
+|   |   +-- SPEC.md
+|   |   +-- TESTING.md
+|   |   \-- TODO.md
+|   \-- ja
+|       +-- ARCHITECTURE.md
+|       +-- CHANGELOG.md
+|       +-- CONTRIBUTING.md
+|       +-- DIAGRAM.md
+|       +-- FOOTPRINTS.md
+|       +-- INSTRUCTIONS.md
+|       +-- RELEASE.md
+|       +-- SECURITY.md
+|       +-- SPEC.md
+|       +-- TESTING.md
+|       \-- TODO.md
 +-- src
 |   +-- config.rs
 |   +-- icon.rs
@@ -137,19 +173,37 @@ MyTree -e "*.log,*.tmp,target"
 +-- README.md
 \-- README_JA.md
 
-2 directories, 18 files
+4 directories, 34 files
 ```
 
 #### Directory Totals Mode (`MyTree -D`)
 ```text
-📁 . [18 files, 79.4 KB]
-├── 📁 docs [6 files, 23.8 KB]
-│   ├── 📝 ARCHITECTURE.md [5.3 KB]
-│   ├── 📝 DIAGRAM.md [3.6 KB]
-│   ├── 📝 FOOTPRINTS.md [1.8 KB]
-│   ├── 📝 INSTRUCTIONS.md [2.4 KB]
-│   ├── 📝 SPEC.md [7.4 KB]
-│   └── 📝 TODO.md [3.2 KB]
+📁 . [34 files, 120.5 KB]
+├── 📁 docs [22 files, 74.5 KB]
+│   ├── 📁 en [11 files, 39.7 KB]
+│   │   ├── 📝 ARCHITECTURE.md [5.7 KB]
+│   │   ├── 📝 CHANGELOG.md [4.6 KB]
+│   │   ├── 📝 CONTRIBUTING.md [1.7 KB]
+│   │   ├── 📝 DIAGRAM.md [4.4 KB]
+│   │   ├── 📝 FOOTPRINTS.md [1.8 KB]
+│   │   ├── 📝 INSTRUCTIONS.md [2.1 KB]
+│   │   ├── 📝 RELEASE.md [1.6 KB]
+│   │   ├── 📝 SECURITY.md [1.7 KB]
+│   │   ├── 📝 SPEC.md [8.5 KB]
+│   │   ├── 📝 TESTING.md [1.9 KB]
+│   │   └── 📝 TODO.md [3.6 KB]
+│   └── 📁 ja [11 files, 44.8 KB]
+│       ├── 📝 ARCHITECTURE.md [6.4 KB]
+│       ├── 📝 CHANGELOG.md [6.3 KB]
+│       ├── 📝 CONTRIBUTING.md [2.3 KB]
+│       ├── 📝 DIAGRAM.md [4.7 KB]
+│       ├── 📝 FOOTPRINTS.md [2.1 KB]
+│       ├── 📝 INSTRUCTIONS.md [2.5 KB]
+│       ├── 📝 RELEASE.md [2.0 KB]
+│       ├── 📝 SECURITY.md [2.2 KB]
+│       ├── 📝 SPEC.md [9.8 KB]
+│       ├── 📝 TESTING.md [2.4 KB]
+│       └── 📝 TODO.md [4.5 KB]
 ├── 📂 src [6 files, 40.3 KB]
 │   ├── 🦀 config.rs [10.0 KB]
 │   ├── 🦀 icon.rs [6.4 KB]
@@ -157,14 +211,14 @@ MyTree -e "*.log,*.tmp,target"
 │   ├── 🦀 serializer.rs [9.5 KB]
 │   ├── 🦀 tree.rs [7.7 KB]
 │   └── 🦀 util.rs [2.6 KB]
-├── 📝 CHANGELOG.md [4.5 KB]
+├── 📝 CHANGELOG.md [340 B]
 ├── 📄 Cargo.lock [150 B]
 ├── 🔧 Cargo.toml [426 B]
 ├── 📄 LICENSE [1.1 KB]
-├── 📝 README.md [3.8 KB]
-└── 📝 README_JA.md [5.4 KB]
+├── 📝 README.md [6.4 KB]
+└── 📝 README_JA.md [8.2 KB]
 
-2 directories, 18 files
+4 directories, 34 files
 ```
 
 ### CLI Options
@@ -186,6 +240,23 @@ MyTree -e "*.log,*.tmp,target"
 | `-g` | `--gitignore` | Disabled | Automatically load and apply exclusion rules from `.gitignore` |
 | `-d <DEPTH>` | `--depth <DEPTH>` | Unlimited | Set maximum recursion depth (e.g., `-d 2`) |
 | `-e <PAT>` | `--exclude <PAT>` | `"target,node_modules,.git"` | Exclude directory names or wildcard patterns |
+
+---
+
+## 📚 Documentation
+
+Detailed documentation is available in the `docs/en/` directory:
+- [CLI Specification](docs/en/SPEC.md)
+- [System Architecture](docs/en/ARCHITECTURE.md)
+- [System Diagrams](docs/en/DIAGRAM.md)
+- [Performance & Footprints](docs/en/FOOTPRINTS.md)
+- [AI Development Instructions](docs/en/INSTRUCTIONS.md)
+- [Testing Policy & Guide](docs/en/TESTING.md)
+- [Release Procedures](docs/en/RELEASE.md)
+- [Contribution Guidelines](docs/en/CONTRIBUTING.md)
+- [Security Policy](docs/en/SECURITY.md)
+- [TODO & Roadmap](docs/en/TODO.md)
+- [Changelog](docs/en/CHANGELOG.md)
 
 ---
 

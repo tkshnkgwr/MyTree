@@ -94,12 +94,30 @@ MyTree C:\Users\Public
 ```text
 📁 .
 ├── 📁 docs
-│   ├── 📝 ARCHITECTURE.md [5.3 KB]
-│   ├── 📝 DIAGRAM.md [3.6 KB]
-│   ├── 📝 FOOTPRINTS.md [1.8 KB]
-│   ├── 📝 INSTRUCTIONS.md [2.4 KB]
-│   ├── 📝 SPEC.md [7.4 KB]
-│   └── 📝 TODO.md [3.2 KB]
+│   ├── 📁 en
+│   │   ├── 📝 ARCHITECTURE.md [5.7 KB]
+│   │   ├── 📝 CHANGELOG.md [4.6 KB]
+│   │   ├── 📝 CONTRIBUTING.md [1.7 KB]
+│   │   ├── 📝 DIAGRAM.md [4.4 KB]
+│   │   ├── 📝 FOOTPRINTS.md [1.8 KB]
+│   │   ├── 📝 INSTRUCTIONS.md [2.1 KB]
+│   │   ├── 📝 RELEASE.md [1.6 KB]
+│   │   ├── 📝 SECURITY.md [1.7 KB]
+│   │   ├── 📝 SPEC.md [8.5 KB]
+│   │   ├── 📝 TESTING.md [1.9 KB]
+│   │   └── 📝 TODO.md [3.6 KB]
+│   └── 📁 ja
+│       ├── 📝 ARCHITECTURE.md [6.4 KB]
+│       ├── 📝 CHANGELOG.md [6.3 KB]
+│       ├── 📝 CONTRIBUTING.md [2.3 KB]
+│       ├── 📝 DIAGRAM.md [4.7 KB]
+│       ├── 📝 FOOTPRINTS.md [2.1 KB]
+│       ├── 📝 INSTRUCTIONS.md [2.5 KB]
+│       ├── 📝 RELEASE.md [2.0 KB]
+│       ├── 📝 SECURITY.md [2.2 KB]
+│       ├── 📝 SPEC.md [9.8 KB]
+│       ├── 📝 TESTING.md [2.4 KB]
+│       └── 📝 TODO.md [4.5 KB]
 ├── 📂 src
 │   ├── 🦀 config.rs [10.0 KB]
 │   ├── 🦀 icon.rs [6.4 KB]
@@ -107,26 +125,44 @@ MyTree C:\Users\Public
 │   ├── 🦀 serializer.rs [9.5 KB]
 │   ├── 🦀 tree.rs [7.7 KB]
 │   └── 🦀 util.rs [2.6 KB]
-├── 📝 CHANGELOG.md [4.5 KB]
+├── 📝 CHANGELOG.md [340 B]
 ├── 📄 Cargo.lock [150 B]
 ├── 🔧 Cargo.toml [426 B]
 ├── 📄 LICENSE [1.1 KB]
-├── 📝 README.md [3.8 KB]
-└── 📝 README_JA.md [5.4 KB]
+├── 📝 README.md [6.4 KB]
+└── 📝 README_JA.md [8.2 KB]
 
-2 directories, 18 files
+4 directories, 34 files
 ```
 
 #### クラシックモード (`MyTree -c`)
 ```text
 .
 +-- docs
-|   +-- ARCHITECTURE.md
-|   +-- DIAGRAM.md
-|   +-- FOOTPRINTS.md
-|   +-- INSTRUCTIONS.md
-|   +-- SPEC.md
-|   \-- TODO.md
+|   +-- en
+|   |   +-- ARCHITECTURE.md
+|   |   +-- CHANGELOG.md
+|   |   +-- CONTRIBUTING.md
+|   |   +-- DIAGRAM.md
+|   |   +-- FOOTPRINTS.md
+|   |   +-- INSTRUCTIONS.md
+|   |   +-- RELEASE.md
+|   |   +-- SECURITY.md
+|   |   +-- SPEC.md
+|   |   +-- TESTING.md
+|   |   \-- TODO.md
+|   \-- ja
+|       +-- ARCHITECTURE.md
+|       +-- CHANGELOG.md
+|       +-- CONTRIBUTING.md
+|       +-- DIAGRAM.md
+|       +-- FOOTPRINTS.md
+|       +-- INSTRUCTIONS.md
+|       +-- RELEASE.md
+|       +-- SECURITY.md
+|       +-- SPEC.md
+|       +-- TESTING.md
+|       \-- TODO.md
 +-- src
 |   +-- config.rs
 |   +-- icon.rs
@@ -141,19 +177,37 @@ MyTree C:\Users\Public
 +-- README.md
 \-- README_JA.md
 
-2 directories, 18 files
+4 directories, 34 files
 ```
 
 #### フォルダ集計表示 (`MyTree -D`)
 ```text
-📁 . [18 files, 79.4 KB]
-├── 📁 docs [6 files, 23.8 KB]
-│   ├── 📝 ARCHITECTURE.md [5.3 KB]
-│   ├── 📝 DIAGRAM.md [3.6 KB]
-│   ├── 📝 FOOTPRINTS.md [1.8 KB]
-│   ├── 📝 INSTRUCTIONS.md [2.4 KB]
-│   ├── 📝 SPEC.md [7.4 KB]
-│   └── 📝 TODO.md [3.2 KB]
+📁 . [34 files, 120.5 KB]
+├── 📁 docs [22 files, 74.5 KB]
+│   ├── 📁 en [11 files, 39.7 KB]
+│   │   ├── 📝 ARCHITECTURE.md [5.7 KB]
+│   │   ├── 📝 CHANGELOG.md [4.6 KB]
+│   │   ├── 📝 CONTRIBUTING.md [1.7 KB]
+│   │   ├── 📝 DIAGRAM.md [4.4 KB]
+│   │   ├── 📝 FOOTPRINTS.md [1.8 KB]
+│   │   ├── 📝 INSTRUCTIONS.md [2.1 KB]
+│   │   ├── 📝 RELEASE.md [1.6 KB]
+│   │   ├── 📝 SECURITY.md [1.7 KB]
+│   │   ├── 📝 SPEC.md [8.5 KB]
+│   │   ├── 📝 TESTING.md [1.9 KB]
+│   │   └── 📝 TODO.md [3.6 KB]
+│   └── 📁 ja [11 files, 44.8 KB]
+│       ├── 📝 ARCHITECTURE.md [6.4 KB]
+│       ├── 📝 CHANGELOG.md [6.3 KB]
+│       ├── 📝 CONTRIBUTING.md [2.3 KB]
+│       ├── 📝 DIAGRAM.md [4.7 KB]
+│       ├── 📝 FOOTPRINTS.md [2.1 KB]
+│       ├── 📝 INSTRUCTIONS.md [2.5 KB]
+│       ├── 📝 RELEASE.md [2.0 KB]
+│       ├── 📝 SECURITY.md [2.2 KB]
+│       ├── 📝 SPEC.md [9.8 KB]
+│       ├── 📝 TESTING.md [2.4 KB]
+│       └── 📝 TODO.md [4.5 KB]
 ├── 📂 src [6 files, 40.3 KB]
 │   ├── 🦀 config.rs [10.0 KB]
 │   ├── 🦀 icon.rs [6.4 KB]
@@ -161,21 +215,21 @@ MyTree C:\Users\Public
 │   ├── 🦀 serializer.rs [9.5 KB]
 │   ├── 🦀 tree.rs [7.7 KB]
 │   └── 🦀 util.rs [2.6 KB]
-├── 📝 CHANGELOG.md [4.5 KB]
+├── 📝 CHANGELOG.md [340 B]
 ├── 📄 Cargo.lock [150 B]
 ├── 🔧 Cargo.toml [426 B]
 ├── 📄 LICENSE [1.1 KB]
-├── 📝 README.md [3.8 KB]
-└── 📝 README_JA.md [5.4 KB]
+├── 📝 README.md [6.4 KB]
+└── 📝 README_JA.md [8.2 KB]
 
-2 directories, 18 files
+4 directories, 34 files
 ```
 
 ### コマンドラインオプション
 
 | オプション | ロングフラグ | デフォルト | 説明 |
 | :--- | :--- | :---: | :--- |
-| `-h` | `--help` | - | ヘルプメニューを表示 (カテゴリ別 & デフォルト動作含む) |
+| `-h` | `--help` | - | ヘルプ表示 (カテゴリ別 & デフォルト動作含む) |
 | `-v` | `--version` | - | バージョン情報を表示 |
 | | `--help-icons` | - | アイコン絵文字とファイル拡張子の対応一覧を表示 |
 | `-c` | `--classic` | 無効 | クラシックモード (カラー無効・アイコン無効・サイズ無効・`+--`/`\--`記号) |
@@ -201,6 +255,23 @@ MyTree C:\Users\Public
 2. Windowsキーを押し、「環境変数を編集」を検索して開きます。
 3. `Path` 環境変数に配置場所のフォルダパスを追加します。
 4. コマンドプロンプトやPowerShellを再起動すると、`MyTree` がご利用いただけます。
+
+---
+
+## 📚 関連ドキュメント
+
+詳細なドキュメントは `docs/ja/` ディレクトリに用意されています：
+- [機能仕様書](docs/ja/SPEC.md)
+- [システムアーキテクチャ設計書](docs/ja/ARCHITECTURE.md)
+- [システム構成図・実行フロー](docs/ja/DIAGRAM.md)
+- [リソース消費・フットプリント記録](docs/ja/FOOTPRINTS.md)
+- [AIエージェント開発指示書](docs/ja/INSTRUCTIONS.md)
+- [テスト方針・実行ガイド](docs/ja/TESTING.md)
+- [リリース手順書](docs/ja/RELEASE.md)
+- [貢献ガイドライン](docs/ja/CONTRIBUTING.md)
+- [セキュリティポリシー](docs/ja/SECURITY.md)
+- [TODO・ロードマップ](docs/ja/TODO.md)
+- [変更履歴](docs/ja/CHANGELOG.md)
 
 ---
 

@@ -1,5 +1,7 @@
 # TODO & Roadmap (TODO.md) - MyTree
 
+[English](../en/TODO.md) | **日本語版**
+
 本文書は、`MyTree` の完了済み機能、現在対応中/計画中のタスク、および将来の拡張アイデアを管理します。
 
 ---
@@ -23,7 +25,7 @@
   - `-e`, `--exclude`: 除外ディレクトリ名 / ワイルドカードパターンの指定
 - [x] **GitHub Actions CI/CD パイプラインの構築**:
   - `.github/workflows/ci.yml`: `main` ブランチへの Push / PR 時に `cargo test`, `clippy`, `fmt`, `doc`, `build` を自動実行
-  - `.github/workflows/release.yml`: `v*` タグの Push 時のみ起動し、Windows Release バイナリ (`MyTree-windows-x64.zip`) を GitHub Release へ自動デプロイ
+  - `.github/workflows/release.yml`: `v*` (例: `v0.1.1`) タグの Push 時のみ起動し、Windows Release バイナリ (`MyTree-windows-x64.zip`) を GitHub Release へ自動デプロイ
 - [x] **ワイルドカード / Glob パターン除外機能 (`match_wildcard`)**:
   - 外部ライブラリなしで `*.tmp`, `*.log`, `build*`, `test?.rs` 等のパターン除外に対応
 - [x] **JSON / XML 構造化出力フォーマット (`--json` / `--xml`)**:

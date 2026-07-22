@@ -1,5 +1,7 @@
 # System Diagrams (DIAGRAM.md) - MyTree
 
+[English](../en/DIAGRAM.md) | **日本語版**
+
 本文書では、`MyTree` の実行フローおよびコンポーネント構造を Mermaid ダイアグラムで可視化します。
 
 ---
@@ -40,7 +42,7 @@ flowchart TD
     
     PrintTree --> TreeRecursion
     TreeRecursion --> PrintSummary[最終集計を出力<br/>X directories, Y files]
-
+    
     CheckFormat -->|Json| BuildTreeJson[build_tree_node & serialize_json<br/>JSONオブジェクト出力]
     CheckFormat -->|Xml| BuildTreeXml[build_tree_node & serialize_xml<br/>XMLツリー出力]
 
