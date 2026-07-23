@@ -16,7 +16,7 @@ mod util;
 use config::{parse_arguments, print_help, OutputFormat, TreeConfig};
 use serializer::{build_tree_node, serialize_json, serialize_xml};
 use std::env;
-use tree::{format_root_line, print_tree};
+use tree::{build_dir_summary_map, format_root_line, print_tree};
 
 fn main() {
     // Windows 10/11のプロンプトでANSIエスケープカラーを有効化
@@ -45,7 +45,13 @@ fn main() {
     // 2. 出力処理の分岐
     match config.output_format {
         OutputFormat::Text => {
-            println!("{}", format_root_line(&config));
+            let summary_map = if config.show_dir_sizes {
+                Some(build_dir_summary_map(&config.target_path, &config))
+            } else {
+                None
+            };
+
+            println!("{}", format_root_line(&config, summary_map.as_ref()));
 
             let mut dir_count = 0;
             let mut file_count = 0;
@@ -58,6 +64,7 @@ fn main() {
                 &config,
                 &mut dir_count,
                 &mut file_count,
+                summary_map.as_ref(),
             );
 
             // 最終集計の出力

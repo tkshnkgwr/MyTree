@@ -8,11 +8,71 @@ use crate::util::{
     count_file_lines, format_byte_size, match_wildcard, parse_gitignore_file, sort_dir_entries,
     LineCountResult,
 };
+use std::collections::HashMap;
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
+
+/// 指定ディレクトリ配下の全ディレクトリの (総サイズ, 総ファイル数) を 1 パスで集計・マップ化する
+pub fn build_dir_summary_map(dir: &Path, config: &TreeConfig) -> HashMap<PathBuf, (u64, usize)> {
+    let mut map = HashMap::new();
+    calculate_dir_summary_recursive(dir, config, &mut map);
+    map
+}
+
+fn calculate_dir_summary_recursive(
+    dir: &Path,
+    config: &TreeConfig,
+    map: &mut HashMap<PathBuf, (u64, usize)>,
+) -> (u64, usize) {
+    let mut total_size = 0u64;
+    let mut total_files = 0usize;
+
+    let gitignore_patterns = if config.use_gitignore {
+        parse_gitignore_file(dir)
+    } else {
+        Vec::new()
+    };
+
+    if let Ok(entries) = fs::read_dir(dir) {
+        for entry in entries.flatten() {
+            let file_name = entry.file_name().to_string_lossy().into_owned();
+
+            if file_name.starts_with('.') && !config.show_hidden {
+                continue;
+            }
+
+            let is_excluded = config
+                .exclude_patterns
+                .iter()
+                .chain(gitignore_patterns.iter())
+                .any(|pattern| match_wildcard(pattern, &file_name));
+            if is_excluded {
+                continue;
+            }
+
+            let path = entry.path();
+            if path.is_dir() {
+                let (sub_size, sub_files) = calculate_dir_summary_recursive(&path, config, map);
+                total_size += sub_size;
+                total_files += sub_files;
+            } else {
+                total_files += 1;
+                if let Ok(metadata) = entry.metadata() {
+                    total_size += metadata.len();
+                }
+            }
+        }
+    }
+
+    map.insert(dir.to_path_buf(), (total_size, total_files));
+    (total_size, total_files)
+}
 
 /// ルート行のフォーマット
-pub fn format_root_line(config: &TreeConfig) -> String {
+pub fn format_root_line(
+    config: &TreeConfig,
+    summary_map: Option<&HashMap<PathBuf, (u64, usize)>>,
+) -> String {
     let folder_name = config
         .target_path
         .file_name()
@@ -28,7 +88,10 @@ pub fn format_root_line(config: &TreeConfig) -> String {
     };
 
     if config.show_dir_sizes {
-        let (total_size, total_files) = calculate_dir_summary(&config.target_path, config);
+        let (total_size, total_files) = summary_map
+            .and_then(|m| m.get(&config.target_path).copied())
+            .unwrap_or_else(|| calculate_dir_summary(&config.target_path, config));
+
         if config.classic_mode {
             format!(
                 "{} [{} files, {}]",
@@ -104,6 +167,7 @@ pub fn print_tree(
     config: &TreeConfig,
     dir_count: &mut usize,
     file_count: &mut usize,
+    summary_map: Option<&HashMap<PathBuf, (u64, usize)>>,
 ) {
     // 深度制限のチェック
     if config.max_depth > 0 && current_depth >= config.max_depth {
@@ -191,7 +255,10 @@ pub fn print_tree(
 
             // ディレクトリ配下の集計情報表示 (-D / --dir-sizes 有効時)
             if config.show_dir_sizes {
-                let (total_size, total_files) = calculate_dir_summary(&path, config);
+                let (total_size, total_files) = summary_map
+                    .and_then(|m| m.get(&path).copied())
+                    .unwrap_or_else(|| calculate_dir_summary(&path, config));
+
                 if config.classic_mode {
                     print!(" [{} files, {}]", total_files, format_byte_size(total_size));
                 } else {
@@ -262,6 +329,7 @@ pub fn print_tree(
                 config,
                 dir_count,
                 file_count,
+                summary_map,
             );
             prefixes.pop();
         }
@@ -278,5 +346,13 @@ mod tests {
         let (size, files) = calculate_dir_summary(Path::new("."), &config);
         assert!(files > 0);
         assert!(size > 0);
+    }
+
+    #[test]
+    fn test_build_dir_summary_map() {
+        let config = TreeConfig::default();
+        let map = build_dir_summary_map(Path::new("."), &config);
+        assert!(!map.is_empty());
+        assert!(map.contains_key(Path::new(".")));
     }
 }

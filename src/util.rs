@@ -134,6 +134,40 @@ pub fn count_file_lines(path: &Path, file_size: u64) -> LineCountResult {
 
 /// ワイルドカード (*, ?) パターンマッチ関数 (依存ライブラリなし)
 pub fn match_wildcard(pattern: &str, text: &str) -> bool {
+    // ASCIIの高速パス (アロケーションフリー)
+    if pattern.is_ascii() && text.is_ascii() {
+        let p = pattern.as_bytes();
+        let t = text.as_bytes();
+        let mut p_idx = 0;
+        let mut t_idx = 0;
+        let mut star_idx = None;
+        let mut match_t_idx = 0;
+
+        while t_idx < t.len() {
+            if p_idx < p.len() && (p[p_idx] == b'?' || p[p_idx].eq_ignore_ascii_case(&t[t_idx])) {
+                p_idx += 1;
+                t_idx += 1;
+            } else if p_idx < p.len() && p[p_idx] == b'*' {
+                star_idx = Some(p_idx);
+                match_t_idx = t_idx;
+                p_idx += 1;
+            } else if let Some(s_idx) = star_idx {
+                p_idx = s_idx + 1;
+                match_t_idx += 1;
+                t_idx = match_t_idx;
+            } else {
+                return false;
+            }
+        }
+
+        while p_idx < p.len() && p[p_idx] == b'*' {
+            p_idx += 1;
+        }
+
+        return p_idx == p.len();
+    }
+
+    // 非ASCII文字が含まれる場合の互換フォールバック
     let p_chars: Vec<char> = pattern.to_lowercase().chars().collect();
     let t_chars: Vec<char> = text.to_lowercase().chars().collect();
 
@@ -213,13 +247,57 @@ pub fn parse_gitignore_file(dir_path: &Path) -> Vec<String> {
 /// 同種内（フォルダ同士・ファイル同士）で `config.sort_mode` に従ってソートします。
 /// `config.reverse_sort` が有効な場合は、同種内の並び順を反転させます。
 pub fn sort_dir_entries(entries: &mut [DirEntry], config: &TreeConfig) {
-    entries.sort_by(|a, b| {
-        let is_dir_a = a.path().is_dir();
-        let is_dir_b = b.path().is_dir();
+    if entries.len() <= 1 {
+        return;
+    }
+
+    struct EntryKey {
+        is_dir: bool,
+        name: std::ffi::OsString,
+        size: u64,
+        time: SystemTime,
+    }
+
+    // 1. 各エントリの比較用キーを一括抽出 (システムコール呼び出し回数を N 回に制限)
+    let keys: Vec<EntryKey> = entries
+        .iter()
+        .map(|entry| {
+            let path = entry.path();
+            let is_dir = path.is_dir();
+            let name = entry.file_name();
+
+            let (size, time) = match config.sort_mode {
+                SortMode::Name => (0, SystemTime::UNIX_EPOCH),
+                SortMode::Size => {
+                    let sz = fs::metadata(&path).map(|m| m.len()).unwrap_or(0);
+                    (sz, SystemTime::UNIX_EPOCH)
+                }
+                SortMode::Time => {
+                    let tm = fs::metadata(&path)
+                        .and_then(|m| m.modified())
+                        .unwrap_or(SystemTime::UNIX_EPOCH);
+                    (0, tm)
+                }
+            };
+
+            EntryKey {
+                is_dir,
+                name,
+                size,
+                time,
+            }
+        })
+        .collect();
+
+    // 2. インデックス配列を作成してソート
+    let mut indices: Vec<usize> = (0..entries.len()).collect();
+    indices.sort_by(|&i, &j| {
+        let key_a = &keys[i];
+        let key_b = &keys[j];
 
         // 1. ディレクトリ優先
-        if is_dir_a != is_dir_b {
-            if is_dir_a {
+        if key_a.is_dir != key_b.is_dir {
+            if key_a.is_dir {
                 return std::cmp::Ordering::Less;
             } else {
                 return std::cmp::Ordering::Greater;
@@ -227,27 +305,16 @@ pub fn sort_dir_entries(entries: &mut [DirEntry], config: &TreeConfig) {
         }
 
         // 2. 同種内での比較
-        let name_a = a.file_name();
-        let name_b = b.file_name();
-
         let ord = match config.sort_mode {
-            SortMode::Name => name_a.cmp(&name_b),
-            SortMode::Size => {
-                let size_a = fs::metadata(a.path()).map(|m| m.len()).unwrap_or(0);
-                let size_b = fs::metadata(b.path()).map(|m| m.len()).unwrap_or(0);
-                // サイズが大きい順 (降順)
-                size_b.cmp(&size_a).then_with(|| name_a.cmp(&name_b))
-            }
-            SortMode::Time => {
-                let time_a = fs::metadata(a.path())
-                    .and_then(|m| m.modified())
-                    .unwrap_or(SystemTime::UNIX_EPOCH);
-                let time_b = fs::metadata(b.path())
-                    .and_then(|m| m.modified())
-                    .unwrap_or(SystemTime::UNIX_EPOCH);
-                // 新しい日時順 (降順)
-                time_b.cmp(&time_a).then_with(|| name_a.cmp(&name_b))
-            }
+            SortMode::Name => key_a.name.cmp(&key_b.name),
+            SortMode::Size => key_b
+                .size
+                .cmp(&key_a.size)
+                .then_with(|| key_a.name.cmp(&key_b.name)),
+            SortMode::Time => key_b
+                .time
+                .cmp(&key_a.time)
+                .then_with(|| key_a.name.cmp(&key_b.name)),
         };
 
         if config.reverse_sort {
@@ -256,6 +323,17 @@ pub fn sort_dir_entries(entries: &mut [DirEntry], config: &TreeConfig) {
             ord
         }
     });
+
+    // 3. インデックス配列に従って entries を in-place 並べ替え
+    for i in 0..entries.len() {
+        let mut correct_idx = indices[i];
+        while correct_idx < i {
+            correct_idx = indices[correct_idx];
+        }
+        if correct_idx != i {
+            entries.swap(i, correct_idx);
+        }
+    }
 }
 
 #[cfg(test)]
