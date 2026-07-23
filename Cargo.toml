@@ -1,6 +1,6 @@
 [package]
 name = "MyTree"
-version = "0.1.2"
+version = "0.1.3"
 edition = "2021"
 authors = ["MyTree Contributors"]
 description = "A simple, highly customizable Tree CLI utility for Windows built with Rust standard library."

@@ -7,7 +7,7 @@
 フォーマットは [Keep a Changelog](https://keepachangelog.com/ja/1.0.0/) に基づいており、
 このプロジェクトは [セマンティック バージョニング](https://semver.org/lang/ja/) に準拠しています。
 
-## [Unreleased] / [0.1.3] - 2026-07-23
+## [0.1.3] - 2026-07-23
 
 ### Added
 - 表示ソート機能強化 (`--sort <MODE>`, `-r` / `--reverse`):
