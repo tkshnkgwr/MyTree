@@ -7,7 +7,7 @@
 フォーマットは [Keep a Changelog](https://keepachangelog.com/ja/1.0.0/) に基づいており、
 このプロジェクトは [セマンティック バージョニング](https://semver.org/lang/ja/) に準拠しています。
 
-## [0.1.3] - 2026-07-23
+## [0.1.4] - 2026-07-23
 
 ### Optimized
 - ディレクトリ集計高速化 (`build_dir_summary_map`):
