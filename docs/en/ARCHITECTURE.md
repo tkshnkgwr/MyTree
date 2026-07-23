@@ -36,8 +36,11 @@ src/
   - Hand-crafted serialization logic: `serialize_json()`, `serialize_xml()`.
   - Escaping utilities: `escape_json_str()`, `escape_xml_str()`.
 - **`src/util.rs`**:
-  - `match_wildcard()`: Evaluates wildcard string matching (`*`, `?`).
+  - `match_wildcard()`: Evaluates wildcard string matching (`*`, `?`) with an allocation-free ASCII fast-path.
   - `format_byte_size()`: Formats raw bytes to human-readable units (`B`, `KB`, `MB`).
+  - `sort_dir_entries()`: Directory-first multi-mode sorting with key-caching to minimize system calls.
+  - `count_file_lines()`: Streaming line counter (with 10MB limit and binary detection).
+  - `parse_gitignore_file()`: Parses `.gitignore` files for pattern matching.
 - **`src/icon.rs`**:
   - `get_icon_emoji()`: Resolves appropriate emoji icons based on filenames, extensions, and directory status.
 
@@ -46,7 +49,7 @@ src/
 ## 2. Core Design Philosophy
 
 ### 2.1 Zero External Dependencies
-- We strictly avoidサードパーティ製 (third-party) crates such as `clap`, `structopt`, `colored`, or `crossterm`. The utility is implemented 100% using Rust's standard library (`std::env`, `std::fs`, `std::path`).
+- We strictly avoid third-party crates such as `clap`, `structopt`, `colored`, or `crossterm`. The utility is implemented 100% using Rust's standard library (`std::env`, `std::fs`, `std::path`).
 - **Benefits**:
   - Extremely fast compile time (sub-second incremental builds).
   - Eliminates dependency vulnerabilities and supply-chain attack vectors.
@@ -60,23 +63,20 @@ To avoid importing heavy cross-platform terminal crates, `MyTree` directly binds
 
 ## 3. Directory Traversal & Sorting Algorithm
 
-### 3.1 Directory-First Sorting
-To enhance readability, directory items under each path (`ReadDir`) are sorted using the following rules:
+### 3.1 Directory-First & Key-Cached Sorting
+To achieve high readability and filesystem traversal performance, sorting in `sort_dir_entries` follows these rules and optimizations:
 
-1. If comparing a directory with a file, **directories are sorted first**.
-2. If comparing directories with directories, or files with files, they are sorted **alphabetically by name**.
+1. **Key Caching**: Directory status and metadata (size, modified time) are fetched once per entry upfront, eliminating repetitive `fs::metadata` system calls during sort comparisons ($O(N)$).
+2. **Directory-First**: Directories are always sorted above files.
+3. **Multi-mode Sorting**: Entries of the same type are sorted by the specified mode (`Name`, `Size`, `Time`), with optional order reversal (`reverse_sort`).
 
 ```rust
-valid_entries.sort_by(|a, b| {
-    let is_dir_a = a.path().is_dir();
-    let is_dir_b = b.path().is_dir();
-
-    if is_dir_a != is_dir_b {
-        if is_dir_a { std::cmp::Ordering::Less } else { std::cmp::Ordering::Greater }
-    } else {
-        a.file_name().cmp(&b.file_name())
-    }
-});
+// Pre-fetch keys to minimize system calls followed by index-based sorting
+let keys: Vec<EntryKey> = entries.iter().map(|entry| ... ).collect();
+let mut indices: Vec<usize> = (0..entries.len()).collect();
+indices.sort_by(|&i, &j| { ... });
+// Reorder slice in-place safely
+for i in 0..entries.len() { ... }
 ```
 
 ### 3.2 Branch Connectors & Indentation Control

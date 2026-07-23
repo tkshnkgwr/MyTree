@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [0.1.3] - 2026-07-23
 
+### Optimized
+- Directory summary acceleration (`build_dir_summary_map`):
+  - Eliminated redundant tree traversals ($O(N \cdot D)$) when `-D` / `--dir-sizes` is specified, utilizing a 1-pass ($O(N)$) summary cache map to dramatically speed up large directory scans.
+- Minimizing system calls in entry sorting (`sort_dir_entries`):
+  - Implemented Key-Cached Sort that pre-fetches directory status and metadata (size, modified time) once per entry, eliminating redundant `fs::metadata` calls during comparisons.
+- Zero-allocation wildcard matching (`match_wildcard`):
+  - Implemented allocation-free ASCII fast-path to eliminate dynamic `Vec<char>` heap allocations.
+- Full documentation synchronization:
+  - Added `sort_mode` and `reverse_sort` fields to `TreeConfig` in `SPEC.md`.
+  - Synchronized algorithm details and `util.rs` responsibility listings in `ARCHITECTURE.md`.
+
 ### Added
 - Enhanced tree display sorting options (`--sort <MODE>`, `-r` / `--reverse`):
   - Added option to select sort key: alphabetical name (`name`, default), file size (`size`), or modified time (`time`).

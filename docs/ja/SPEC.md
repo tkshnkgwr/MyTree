@@ -53,6 +53,12 @@ enum OutputFormat {
     Xml,
 }
 
+enum SortMode {
+    Name,
+    Size,
+    Time,
+}
+
 struct TreeConfig {
     target_path: PathBuf,        // デフォルト: "."
     show_icons: bool,            // デフォルト: true
@@ -65,6 +71,8 @@ struct TreeConfig {
     classic_mode: bool,          // デフォルト: false (クラシックモードオプション指定時有効化)
     output_format: OutputFormat, // デフォルト: OutputFormat::Text
     use_gitignore: bool,         // デフォルト: false (.gitignore読み込み指定時有効化)
+    sort_mode: SortMode,         // デフォルト: SortMode::Name
+    reverse_sort: bool,          // デフォルト: false (反転フラグ)
 }
 ```
 

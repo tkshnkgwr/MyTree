@@ -36,8 +36,11 @@ src/
   - `serialize_json()` / `serialize_xml()`: 手動構造化シリアライザエンジン
   - `escape_json_str()` / `escape_xml_str()`: 特殊文字エスケープ
 - **`src/util.rs`**:
-  - `match_wildcard()`: ワイルドカード (*, ?) パターンマッチ処理
+  - `match_wildcard()`: ワイルドカード (*, ?) パターンマッチ処理 (ASCII高速パス)
   - `format_byte_size()`: ファイルサイズ単位換算表記
+  - `sort_dir_entries()`: ディレクトリ優先・マルチモードソート (システムコール最小化キーキャッシュ)
+  - `count_file_lines()`: ストリーミングファイル行数カウント (10MB制限・バイナリ判定)
+  - `parse_gitignore_file()`: `.gitignore` ファイルのパースおよびパターン抽出
 - **`src/icon.rs`**:
   - `get_icon_emoji()`: 拡張子・ファイル名・ディレクトリ名に応じた絵文字マッピングエンジン
 
@@ -60,23 +63,20 @@ Windows 10/11 の標準コンソール (`cmd.exe`) や旧PowerShellではデフ�
 
 ## 3. ディレクトリ探索 & ソートアルゴリズム
 
-### 3.1 ディレクトリ優先ソート (Directory-First Sorting)
-ツリー構造の視認性を向上させるため、各階層の読込結果 (`ReadDir`) は以下のルールに従って並べ替えられます：
+### 3.1 ディレクトリ優先 & キーキャッシュソート (Directory-First & Key-Cached Sorting)
+ツリー構造の視認性とファイルシステムアクセス性能を両立するため、各階層のエントリソート (`sort_dir_entries`) は以下のルールおよび最適化に従って実行されます：
 
-1. ディレクトリとファイルを比較する場合、**ディレクトリを優先**。
-2. ディレクトリ同士、ファイル同士の場合は、**ファイル名（辞書順）**で並べ替え。
+1. **比較キーの事前抽出 (Key Caching)**: 各エントリのディレクトリ判定やメタデータ (サイズ・更新日時) を最初に 1 回だけ取得し、比較中の重複 `fs::metadata` システムコールを完全に排除します ($O(N)$)。
+2. **ディレクトリ優先**: ディレクトリとファイルを比較する場合、常に**ディレクトリを優先**。
+3. **指定モードソート**: 同種内（フォルダ同士・ファイル同士）では指定されたソート基準 (`Name`, `Size`, `Time`) に従って並び替え、`reverse_sort` が有効な場合は結果を反転します。
 
 ```rust
-valid_entries.sort_by(|a, b| {
-    let is_dir_a = a.path().is_dir();
-    let is_dir_b = b.path().is_dir();
-
-    if is_dir_a != is_dir_b {
-        if is_dir_a { std::cmp::Ordering::Less } else { std::cmp::Ordering::Greater }
-    } else {
-        a.file_name().cmp(&b.file_name())
-    }
-});
+// キーの一括抽出とインデックスソートによるシステムコール最小化
+let keys: Vec<EntryKey> = entries.iter().map(|entry| ... ).collect();
+let mut indices: Vec<usize> = (0..entries.len()).collect();
+indices.sort_by(|&i, &j| { ... });
+// in-place 置換で要素を安全に並べ替え
+for i in 0..entries.len() { ... }
 ```
 
 ### 3.2 枝記号インデント制御

@@ -9,6 +9,17 @@
 
 ## [0.1.3] - 2026-07-23
 
+### Optimized
+- ディレクトリ集計高速化 (`build_dir_summary_map`):
+  - `-D` / `--dir-sizes` 指定時の重複ツリー走査 ($O(N \cdot D)$) を排除し、1 パス ($O(N)$) 集計キャッシュマップにより大容量フォルダの探索速度を劇的に向上。
+- エントリソートのシステムコール最小化 (`sort_dir_entries`):
+  - ディレクトリ判定およびメタデータ (ファイルサイズ・更新日時) を事前一括取得する Key-Cached Sort を導入し、比較時の重複 `fs::metadata` 呼び出し回数を削減。
+- ワイルドカードパターンのメモリ確保ゼロ化 (`match_wildcard`):
+  - ASCII パターンの動的アロケーション (`Vec<char>`) を排除する高速パスを実装。
+- ドキュメント完全同調:
+  - `SPEC.md` の `TreeConfig` 構造体に `sort_mode` および `reverse_sort` を追記。
+  - `ARCHITECTURE.md` のアルゴリズムおよび `util.rs` 機能一覧を最新コードベースに同期。
+
 ### Added
 - 表示ソート機能強化 (`--sort <MODE>`, `-r` / `--reverse`):
   - 名前順 (`name`, デフォルト)、ファイルサイズ順 (`size`), 最終更新日時順 (`time`) の指定オプション追加。
