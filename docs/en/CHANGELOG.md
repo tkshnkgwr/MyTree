@@ -7,7 +7,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
-## [Unreleased] / [0.1.1] - 2026-07-21
+## [Unreleased] / [0.1.3] - 2026-07-23
+
+### Added
+- Enhanced tree display sorting options (`--sort <MODE>`, `-r` / `--reverse`):
+  - Added option to select sort key: alphabetical name (`name`, default), file size (`size`), or modified time (`time`).
+  - Added reverse order flag (`-r` / `--reverse`).
+  - Centralized sorting logic maintaining directory-first precedence in `sort_dir_entries`.
+  - Added unit tests for `SortMode` and sorting utilities (total tests expanded to 20).
+- Line count display option (`-l` / `--lines`):
+  - Streaming line count functionality active only when the option is explicitly enabled.
+  - Memory-efficient `std::io::BufReader` buffered reading to count `\n` characters sequentially.
+  - Filtered line counting limited to curated text extensions (`rs`, `py`, `js`, `ts`, `md`, `txt`, etc.).
+  - Automatic detection and exclusion of binary files via null-byte (`\0`) checking in the initial buffer.
+  - Automatic skipping for large text files >= 10MB with warning label `[>10MB skipped]`.
+  - Added unit tests for `count_file_lines` and `-l` / `--lines` (total tests expanded to 18).
+
+## [0.1.1] - 2026-07-21
 
 ### Optimized
 - Refactored `src/main.rs` into multiple modules:

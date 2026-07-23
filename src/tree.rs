@@ -4,7 +4,10 @@
 
 use crate::config::TreeConfig;
 use crate::icon;
-use crate::util::{format_byte_size, match_wildcard, parse_gitignore_file};
+use crate::util::{
+    count_file_lines, format_byte_size, match_wildcard, parse_gitignore_file, sort_dir_entries,
+    LineCountResult,
+};
 use std::fs;
 use std::path::Path;
 
@@ -142,24 +145,8 @@ pub fn print_tree(
         valid_entries.push(entry);
     }
 
-    // ソート処理 (ディレクトリを優先ソート)
-    valid_entries.sort_by(|a, b| {
-        let name_a = a.file_name();
-        let name_b = b.file_name();
-
-        let is_dir_a = a.path().is_dir();
-        let is_dir_b = b.path().is_dir();
-
-        if is_dir_a != is_dir_b {
-            if is_dir_a {
-                std::cmp::Ordering::Less
-            } else {
-                std::cmp::Ordering::Greater
-            }
-        } else {
-            name_a.cmp(&name_b)
-        }
-    });
+    // ソート処理 (ディレクトリ優先 & 指定モード)
+    sort_dir_entries(&mut valid_entries, config);
 
     let count = valid_entries.len();
     for (idx, entry) in valid_entries.iter().enumerate() {
@@ -220,15 +207,35 @@ pub fn print_tree(
             // 通常のファイル
             print!("{}", file_name);
 
+            let metadata = entry.metadata().ok();
+            let file_size = metadata.as_ref().map(|m| m.len()).unwrap_or(0);
+
+            let mut info_parts = Vec::new();
+
             // ファイルサイズ表示
-            if config.show_sizes {
-                if let Ok(metadata) = entry.metadata() {
-                    let size = metadata.len();
-                    if config.classic_mode {
-                        print!(" [{}]", format_byte_size(size));
-                    } else {
-                        print!(" \x1b[90m[{}]\x1b[0m", format_byte_size(size));
+            if config.show_sizes && metadata.is_some() {
+                info_parts.push(format_byte_size(file_size));
+            }
+
+            // 行数表示
+            if config.show_lines {
+                match count_file_lines(&path, file_size) {
+                    LineCountResult::Count(lines) => {
+                        info_parts.push(format!("{} lines", lines));
                     }
+                    LineCountResult::SkippedTooLarge => {
+                        info_parts.push(">10MB skipped".to_string());
+                    }
+                    LineCountResult::SkippedBinaryOrUnsupported | LineCountResult::Error => {}
+                }
+            }
+
+            if !info_parts.is_empty() {
+                let info_str = info_parts.join(", ");
+                if config.classic_mode {
+                    print!(" [{}]", info_str);
+                } else {
+                    print!(" \x1b[90m[{}]\x1b[0m", info_str);
                 }
             }
         }

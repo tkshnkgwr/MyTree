@@ -39,6 +39,13 @@ This document tracks completed features, current tasks, and future ideas for `My
   - High test coverage spanning CLI options, byte conversions, icon resolution, wildcard rules, gitignore parsing, JSON/XML serialization, and traversal sums.
 - [x] **Automatic Windows ANSI Virtual Terminal Initialization** (direct `kernel32.dll` Win32 API FFI)
 - [x] **Directory-First Traversal Sorting** (folders listed before files)
+- [x] **Added File Line Count Option (`-l` / `--lines`)**:
+  - Implemented memory-efficient streaming buffered sequential `\n` line counting.
+  - Integrated curated text extension filtering, binary detection (null byte check), and >10MB limit skip (`[>10MB skipped]`).
+  - Added unit tests for `count_file_lines` and `-l` / `--lines` (expanded to 18 total tests).
+- [x] **Enhanced Tree Display Sorting (`--sort <MODE>`, `-r` / `--reverse`)**:
+  - Implemented sort modes by name (`name`), file size (`size`), and modified time (`time`).
+  - Added order reversal flag (`-r` / `--reverse`) and centralized logic in `sort_dir_entries` (expanded to 20 total tests).
 - [x] **Complete Documentation System**:
   - `README.md` / `README_JA.md`
   - `SPEC.md`, `ARCHITECTURE.md`, `DIAGRAM.md`, `FOOTPRINTS.md`, `TODO.md`, `INSTRUCTIONS.md`, `CHANGELOG.md`
@@ -48,8 +55,6 @@ This document tracks completed features, current tasks, and future ideas for `My
 
 ## 2. Upcoming Tasks (Todo / In Progress)
 
-- [ ] **Sorting Control Options (`--sort`)**:
-  - Add sort control flags (sort by: `name`, `size`, `time`).
 - [ ] **ANSI Color Mode Flags (`--color <MODE>`)**:
   - Support `auto`, `always`, and `never` to control color behavior when redirecting stdout.
 

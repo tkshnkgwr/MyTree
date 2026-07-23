@@ -223,23 +223,26 @@ MyTree -e "*.log,*.tmp,target"
 
 ### CLI Options
 
-| Flag | Long Flag | Default | Description |
-| :--- | :--- | :---: | :--- |
-| `-h` | `--help` | - | Show help menu (categorized layout) |
-| `-v` | `--version` | - | Display version information |
-| | `--help-icons` | - | Display icon emoji mapping reference table |
-| `-c` | `--classic` | Disabled | Classic mode (no colors, no icons, no file sizes, ASCII `+--`/`\--` connectors) |
-| `-i` | `--icons` | **Enabled** | Enable emoji icons for files and folders |
-| `-I` | `--no-icons` | - | Disable emoji icons |
-| `-s` | `--sizes` | **Enabled** | Display file size (`B`, `KB`, `MB`) |
-| `-S` | `--no-sizes` | - | Disable file size display |
-| `-D` | `--dir-sizes`, `--du` | Disabled | Display total file count and size for directories |
-| | `--json` | Disabled | Output tree as JSON structured data |
-| | `--xml` | Disabled | Output tree as XML structured data |
-| `-a` | `--all` | Disabled | Show hidden files and directories starting with `.` |
-| `-g` | `--gitignore` | Disabled | Automatically load and apply exclusion rules from `.gitignore` |
-| `-d <DEPTH>` | `--depth <DEPTH>` | Unlimited | Set maximum recursion depth (e.g., `-d 2`) |
-| `-e <PAT>` | `--exclude <PAT>` | `"target,node_modules,.git"` | Exclude directory names or wildcard patterns |
+| Flag       | Long Flag             |      Default       | Description                                                                     |
+| :--------- | :-------------------- | :----------------: | :------------------------------------------------------------------------------ |
+| `-h`       | `--help`              |         -          | Show help menu (categorized layout)                                             |
+| `-v`       | `--version`           |         -          | Display version information                                                     |
+|            | `--help-icons`        |         -          | Display icon emoji mapping reference table                                      |
+| `-c`       | `--classic`           |      Disabled      | Classic mode (no colors, no icons, no file sizes, ASCII `+--`/`\--` connectors) |
+| `-i`       | `--icons`             |    **Enabled**     | Enable emoji icons for files and folders                                        |
+| `-I`       | `--no-icons`          |         -          | Disable emoji icons                                                             |
+| `-s`       | `--sizes`             |    **Enabled**     | Display file size (`B`, `KB`, `MB`)                                             |
+| `-S`       | `--no-sizes`          |         -          | Disable file size display                                                       |
+| `-D`       | `--dir-sizes`, `--du` |      Disabled      | Display total file count and size for directories                               |
+| `-l`       | `--lines`             |      Disabled      | Display file line counts (text files only, >10MB skipped)                       |
+|            | `--json`              |      Disabled      | Output tree as JSON structured data                                             |
+|            | `--xml`               |      Disabled      | Output tree as XML structured data                                              |
+| `-a`       | `--all`               |      Disabled      | Show hidden files and directories starting with `.`                             |
+| `-g`       | `--gitignore`         |      Disabled      | Automatically load and apply exclusion rules from `.gitignore`                  |
+|            | `--sort <MODE>`       |       `name`       | Select sort mode (`name`: alphabetical, `size`: file size, `time`: modified)    |
+| `-r`       | `--reverse`           |      Disabled      | Reverse the sorting order                                                       |
+| `-d <D>`   | `--depth <DEPTH>`     |     Unlimited      | Set maximum recursion depth (e.g., `-d 2`)                                      |
+| `-e <PAT>` | `--exclude <PAT>`     | `"target,...,.git"`| Exclude directory names or wildcard patterns                                    |
 
 ---
 

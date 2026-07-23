@@ -4,7 +4,7 @@
 
 use crate::config::TreeConfig;
 use crate::tree::calculate_dir_summary;
-use crate::util::{match_wildcard, parse_gitignore_file};
+use crate::util::{match_wildcard, parse_gitignore_file, sort_dir_entries};
 use std::fs;
 use std::path::Path;
 
@@ -90,24 +90,8 @@ pub fn build_tree_node(
             valid_entries.push(entry);
         }
 
-        // ソート処理 (ディレクトリを優先ソート)
-        valid_entries.sort_by(|a, b| {
-            let name_a = a.file_name();
-            let name_b = b.file_name();
-
-            let is_dir_a = a.path().is_dir();
-            let is_dir_b = b.path().is_dir();
-
-            if is_dir_a != is_dir_b {
-                if is_dir_a {
-                    std::cmp::Ordering::Less
-                } else {
-                    std::cmp::Ordering::Greater
-                }
-            } else {
-                name_a.cmp(&name_b)
-            }
-        });
+        // ソート処理 (ディレクトリ優先 & 指定モード)
+        sort_dir_entries(&mut valid_entries, config);
 
         for entry in valid_entries {
             let entry_path = entry.path();

@@ -34,10 +34,13 @@ MyTree [OPTIONS] [TARGET_PATH]
 | `-s`   | `--sizes`             | None                 | `true` (std)   | Displays file sizes next to file names.                                 |
 | `-S`   | `--no-sizes`          | None                 | `false`        | Hides file sizes.                                                       |
 | `-D`   | `--dir-sizes`, `--du` | None                 | `false`        | Displays total file count and size for directories.                     |
+| `-l`   | `--lines`             | None                 | `false`        | Displays file line counts (text files only, >10MB skipped).             |
 |        | `--json`              | None                 | `false`        | Outputs tree structure in JSON format.                                  |
 |        | `--xml`               | None                 | `false`        | Outputs tree structure in XML format.                                   |
 | `-a`   | `--all`               | None                 | `false`        | Includes hidden files starting with a dot (`.`).                        |
 | `-g`   | `--gitignore`         | None                 | `false`        | Auto-applies ignore patterns from `.gitignore` files.                   |
+|        | `--sort`              | `<MODE>` (String)    | `name`         | Selects sort key (`name`, `size`, `time`).                              |
+| `-r`   | `--reverse`           | None                 | `false`        | Reverses the sorting order.                                             |
 | `-d`   | `--depth`             | `<DEPTH>` (usize)    | `0` (unlimited)| Restricts maximum tree traversal depth.                                 |
 | `-e`   | `--exclude`           | `<PATTERNS>` (String)| `"target,..."` | Exclude directory names or wildcard patterns (`*`, `?`).                |
 
@@ -55,6 +58,7 @@ struct TreeConfig {
     show_icons: bool,            // Default: true
     show_sizes: bool,            // Default: true
     show_dir_sizes: bool,        // Default: false (enabled via option)
+    show_lines: bool,            // Default: false (enabled via option)
     show_hidden: bool,           // Default: false
     max_depth: usize,            // Default: 0 (unlimited)
     exclude_patterns: Vec<String>, // Default: ["target", "node_modules", ".git"]

@@ -34,10 +34,13 @@ MyTree [OPTIONS] [TARGET_PATH]
 | `-s`       | `--sizes`             | なし                  | `true` (標準)   | ファイル名の横にファイルサイズ (`[1.2 KB]` 等) を表示する。              |
 | `-S`       | `--no-sizes`          | なし                  | `false`         | ファイルサイズを非表示にする。                                           |
 | `-D`       | `--dir-sizes`, `--du` | なし                  | `false`         | フォルダ名の横に配下の総件数・総容量 (`[15 files, 4.2 MB]` 等) を集計表示 |
+| `-l`       | `--lines`             | なし                  | `false`         | ファイル行数を表示 (`[120 lines]`, テキスト限定, 10MB超は `[>10MB skipped]`) |
 |            | `--json`              | なし                  | `false`         | JSON 形式でツリーを出力する。                                            |
 |            | `--xml`               | なし                  | `false`         | XML 形式でツリーを出力する。                                             |
 | `-a`       | `--all`               | なし                  | `false`         | ドット (`.`) から始まる隠しファイル・フォルダを表示に含める。            |
 | `-g`       | `--gitignore`         | なし                  | `false`         | `.gitignore` ファイルから除外パターンを自動読み込みして適用する。        |
+|            | `--sort`              | `<MODE>` (String)     | `name`          | ソート基準を指定する (`name`, `size`, `time`)。                          |
+| `-r`       | `--reverse`           | なし                  | `false`         | ソート順を反転 (逆順) して表示する。                                    |
 | `-d`       | `--depth`             | `<DEPTH>` (usize)     | `0` (無制限)    | ツリー探索の最大階層深さを制限する。                                     |
 | `-e`       | `--exclude`           | `<PATTERNS>` (String) | `"target,..."`  | 除外する名前・ワイルドカード (`*`, `?`) をカンマ区切りで指定する。       |
 
@@ -55,6 +58,7 @@ struct TreeConfig {
     show_icons: bool,            // デフォルト: true
     show_sizes: bool,            // デフォルト: true
     show_dir_sizes: bool,        // デフォルト: false (集計オプション指定時のみ有効化)
+    show_lines: bool,            // デフォルト: false (行数表示オプション指定時のみ有効化)
     show_hidden: bool,           // デフォルト: false
     max_depth: usize,            // デフォルト: 0 (無制限)
     exclude_patterns: Vec<String>, // デフォルト: ["target", "node_modules", ".git"]
