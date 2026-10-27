@@ -49,7 +49,7 @@ This document tracks completed features, current tasks, and future ideas for `My
 - [x] **Complete Documentation System**:
   - `README.md` / `README_JA.md`
   - `SPEC.md`, `ARCHITECTURE.md`, `DIAGRAM.md`, `FOOTPRINTS.md`, `TODO.md`, `INSTRUCTIONS.md`, `CHANGELOG.md`
-  - `LICENSE` (MIT)
+  - `LICENSE` (GPL-3.0-or-later)
 
 ---
 

@@ -7,6 +7,15 @@
 フォーマットは [Keep a Changelog](https://keepachangelog.com/ja/1.0.0/) に基づいており、
 このプロジェクトは [セマンティック バージョニング](https://semver.org/lang/ja/) に準拠しています。
 
+## [0.1.6] - 2026-10-27
+
+### Changed
+- ライセンスを MIT から GNU General Public License v3.0 or later (GPL-3.0-or-later) に変更:
+  - `LICENSE` ファイルを GNU GPL v3 フルテキストに更新。
+  - `Cargo.toml` の `license` フィールドを `GPL-3.0-or-later` に更新。
+  - `README.md` および `README_JA.md` のライセンスバッジと説明文を更新。
+  - `MyTree -v` / `--version` 実行時のライセンス表記を `License: GPL-3.0-or-later` に更新。
+
 ## [0.1.5] - 2026-10-27
 
 ### Added

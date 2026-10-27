@@ -187,7 +187,7 @@ pub fn parse_arguments(args: &[String], config: &mut TreeConfig) -> Result<(), S
 /// バージョン情報の出力
 pub fn print_version() {
     println!(
-        "MyTree v{}\nCopyright (c) 2026 tkshnkgwr\nLicense: MIT",
+        "MyTree v{}\nCopyright (c) 2026 tkshnkgwr\nLicense: GPL-3.0-or-later",
         env!("CARGO_PKG_VERSION")
     );
 }
@@ -372,6 +372,6 @@ mod tests {
 
     #[test]
     fn test_version_env() {
-        assert_eq!(env!("CARGO_PKG_VERSION"), "0.1.5");
+        assert_eq!(env!("CARGO_PKG_VERSION"), "0.1.6");
     }
 }

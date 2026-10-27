@@ -49,7 +49,7 @@
 - [x] **完全ドキュメンテーション体系の構築**:
   - `README.md` / `README_JA.md`
   - `SPEC.md`, `ARCHITECTURE.md`, `DIAGRAM.md`, `FOOTPRINTS.md`, `TODO.md`, `INSTRUCTIONS.md`, `CHANGELOG.md`
-  - `LICENSE` (MIT)
+  - `LICENSE` (GPL-3.0-or-later)
 
 ---
 

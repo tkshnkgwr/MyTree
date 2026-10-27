@@ -7,6 +7,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.1.6] - 2026-10-27
+
+### Changed
+- Changed license from MIT to GNU General Public License v3.0 or later (GPL-3.0-or-later):
+  - Updated `LICENSE` file with full GNU GPL v3 text.
+  - Updated `license` field in `Cargo.toml` to `GPL-3.0-or-later`.
+  - Updated license badge and descriptions in `README.md` and `README_JA.md`.
+  - Updated version output in `MyTree -v` / `--version` to display `License: GPL-3.0-or-later`.
+
 ## [0.1.5] - 2026-10-27
 
 ### Added

@@ -1,9 +1,9 @@
 # MyTree 🌲
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![License: GPL-3.0-or-later](https://img.shields.io/badge/License-GPL--3.0--or--later-blue.svg)](LICENSE)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)
 [![Rust](https://img.shields.io/badge/rust-2021%20edition-orange.svg)](https://www.rust-lang.org/)
-![Version](https://img.shields.io/badge/version-0.1.5-green.svg)
+![Version](https://img.shields.io/badge/version-0.1.6-green.svg)
 [![CI](https://github.com/tkshnkgwr/MyTree/actions/workflows/ci.yml/badge.svg)](https://github.com/tkshnkgwr/MyTree/actions/workflows/ci.yml)
 
 **English** | [日本語版](README_JA.md)
@@ -230,4 +230,4 @@ Detailed documentation is available in the `docs/en/` directory:
 
 ## 📄 License
 
-This project is licensed under the MIT License - Copyright (c) 2026 tkshnkgwr. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the GNU General Public License v3.0 or later (GPL-3.0-or-later) - Copyright (c) 2026 tkshnkgwr. See the [LICENSE](LICENSE) file for details.
