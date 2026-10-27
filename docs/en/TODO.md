@@ -35,8 +35,8 @@ This document tracks completed features, current tasks, and future ideas for `My
   - Added mappings for directory types (`docs`, `.vscode`, `public`, etc.), lock files, build tools, languages (`.swift`, `.kt`, `.vue`, `.svelte`, `.astro`, etc.), and databases/schemas.
 - [x] **Refactored Module Separation (1,000-Line Rule Met)**:
   - Split single file `src/main.rs` into 5 distinct modules (`main.rs`, `config.rs`, `tree.rs`, `serializer.rs`, `util.rs`, `icon.rs`) to maintain codebase cleanliness.
-- [x] **Expanded Unit Tests (17 Tests)**:
-  - High test coverage spanning CLI options, byte conversions, icon resolution, wildcard rules, gitignore parsing, JSON/XML serialization, and traversal sums.
+- [x] **Expanded Unit Tests (21 Total Tests)**:
+  - High test coverage spanning CLI options, version info, byte conversions, icon resolution, wildcard rules, gitignore parsing, JSON/XML serialization, and traversal sums.
 - [x] **Automatic Windows ANSI Virtual Terminal Initialization** (direct `kernel32.dll` Win32 API FFI)
 - [x] **Directory-First Traversal Sorting** (folders listed before files)
 - [x] **Added File Line Count Option (`-l` / `--lines`)**:

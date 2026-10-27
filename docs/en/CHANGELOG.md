@@ -7,6 +7,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.1.5] - 2026-10-27
+
+### Added
+- Extended version output (`print_version`):
+  - Output copyright and MIT license information alongside the version string on `MyTree -v` / `--version`.
+- Added AI Agent development support skills (`.agents/skills/`):
+  - Introduced `git-commit`, `markdown-table`, `rust-verification`, and `vault-memo` workflow skills.
+
+### Fixed
+- Restored and updated README documentation:
+  - Restored full content (features, usage, CLI options table, output samples) in `README.md` and `README_JA.md`.
+- Synchronized missing icon entries in specifications (`SPEC.md`):
+  - Added implemented Web & styling emoji icons (`.html` / `.htm` => `🌐`, `.css` / `.scss` / `.sass` / `.less` => `🎨`) to both English and Japanese specification files.
+- Synchronized unit test counts in tracking document (`TODO.md`):
+  - Updated coverage metrics to reflect all 21 passing unit tests.
+
 ## [0.1.4] - 2026-07-23
 
 ### Optimized

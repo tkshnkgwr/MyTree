@@ -23,26 +23,26 @@ MyTree [OPTIONS] [TARGET_PATH]
 
 ### 2.2 Options List
 
-| Option | Long Flag             | Argument             | Default        | Description                                                             |
-| :----- | :-------------------- | :------------------- | :------------: | :---------------------------------------------------------------------- |
-| `-h`   | `--help`              | None                 | -              | Shows categorized help menu and exits with code `0`.                    |
-| `-v`   | `--version`           | None                 | -              | Prints version info and exits with code `0`.                            |
-|        | `--help-icons`        | None                 | -              | Prints icon mapping table and exits with code `0`.                      |
-| `-c`   | `--classic`           | None                 | `false`        | Classic mode (no colors, icons, sizes; ASCII connectors).               |
-| `-i`   | `--icons`             | None                 | `true` (std)   | Shows emoji icons for files and directories.                            |
-| `-I`   | `--no-icons`          | None                 | `false`        | Hides emoji icons.                                                      |
-| `-s`   | `--sizes`             | None                 | `true` (std)   | Displays file sizes next to file names.                                 |
-| `-S`   | `--no-sizes`          | None                 | `false`        | Hides file sizes.                                                       |
-| `-D`   | `--dir-sizes`, `--du` | None                 | `false`        | Displays total file count and size for directories.                     |
-| `-l`   | `--lines`             | None                 | `false`        | Displays file line counts (text files only, >10MB skipped).             |
-|        | `--json`              | None                 | `false`        | Outputs tree structure in JSON format.                                  |
-|        | `--xml`               | None                 | `false`        | Outputs tree structure in XML format.                                   |
-| `-a`   | `--all`               | None                 | `false`        | Includes hidden files starting with a dot (`.`).                        |
-| `-g`   | `--gitignore`         | None                 | `false`        | Auto-applies ignore patterns from `.gitignore` files.                   |
-|        | `--sort`              | `<MODE>` (String)    | `name`         | Selects sort key (`name`, `size`, `time`).                              |
-| `-r`   | `--reverse`           | None                 | `false`        | Reverses the sorting order.                                             |
-| `-d`   | `--depth`             | `<DEPTH>` (usize)    | `0` (unlimited)| Restricts maximum tree traversal depth.                                 |
-| `-e`   | `--exclude`           | `<PATTERNS>` (String)| `"target,..."` | Exclude directory names or wildcard patterns (`*`, `?`).                |
+| Option | Long Flag             | Argument              |    Default     | Description                                                             |
+| :----- | :-------------------- | :-------------------- | :------------: | :---------------------------------------------------------------------- |
+| `-h`   | `--help`              | None                  |       -        | Shows categorized help menu and exits with code `0`.                    |
+| `-v`   | `--version`           | None                  |       -        | Prints version info and exits with code `0`.                            |
+|        | `--help-icons`        | None                  |       -        | Prints icon mapping table and exits with code `0`.                      |
+| `-c`   | `--classic`           | None                  |    `false`     | Classic mode (no colors, icons, sizes; ASCII connectors).               |
+| `-i`   | `--icons`             | None                  |  `true` (std)  | Shows emoji icons for files and directories.                            |
+| `-I`   | `--no-icons`          | None                  |    `false`     | Hides emoji icons.                                                      |
+| `-s`   | `--sizes`             | None                  |  `true` (std)  | Displays file sizes next to file names.                                 |
+| `-S`   | `--no-sizes`          | None                  |    `false`     | Hides file sizes.                                                       |
+| `-D`   | `--dir-sizes`, `--du` | None                  |    `false`     | Displays total file count and size for directories.                     |
+| `-l`   | `--lines`             | None                  |    `false`     | Displays file line counts (text files only, >10MB skipped).             |
+|        | `--json`              | None                  |    `false`     | Outputs tree structure in JSON format.                                  |
+|        | `--xml`               | None                  |    `false`     | Outputs tree structure in XML format.                                   |
+| `-a`   | `--all`               | None                  |    `false`     | Includes hidden files starting with a dot (`.`).                        |
+| `-g`   | `--gitignore`         | None                  |    `false`     | Auto-applies ignore patterns from `.gitignore` files.                   |
+|        | `--sort`              | `<MODE>` (String)     |     `name`     | Selects sort key (`name`, `size`, `time`).                              |
+| `-r`   | `--reverse`           | None                  |    `false`     | Reverses the sorting order.                                             |
+| `-d`   | `--depth`             | `<DEPTH>` (usize)     | `0` (unlimited)| Restricts maximum tree traversal depth.                                 |
+| `-e`   | `--exclude`           | `<PATTERNS>` (String) | `"target,..."` | Exclude directory names or wildcard patterns (`*`, `?`).                |
 
 ### 2.3 Default Configuration Structure (`TreeConfig`)
 
@@ -124,7 +124,9 @@ struct TreeConfig {
   - `.lua` => `🌙` (Lua)
   - `.c`, `.cpp`, `.h`, `.hpp`, `.cs` => `⚙` (C / C++ / C#)
   - `.php` => `🐘` (PHP)
-- Databases, Schema & IaC:
+- Web, Styling, DB, API & Infrastructure:
+  - `.html`, `.htm` => `🌐` (HTML)
+  - `.css`, `.scss`, `.sass`, `.less` => `🎨` (Stylesheets)
   - `.sql`, `.db`, `.sqlite`, `.sqlite3` => `💾` (Database)
   - `.graphql`, `.gql`, `.prisma` => `🔷` (GraphQL / Prisma)
   - `.tf`, `.tfvars` => `🏗` (Terraform)
@@ -165,13 +167,13 @@ struct TreeConfig {
 
 ## 4. Error Handling & Exit Codes
 
-| Scenario                         | Error Output                                     | Exit Code |
-| :------------------------------- | :----------------------------------------------- | :-------: |
-| Success                          | None                                             |    `0`    |
-| `--help` invoked                 | Displays group-organized help menu               |    `0`    |
-| `--version` invoked              | Displays version information                     |    `0`    |
-| `--help-icons` invoked           | Displays file types and icon mappings            |    `0`    |
-| Unknown options                  | `[ERROR]: Unknown option: <ARG>`                 |    `1`    |
-| Target path does not exist       | `[ERROR]: Specified path does not exist: <PATH>` |    `1`    |
-| Missing arguments for `-d` / `-e`| `[ERROR]: Depth value not specified...`          |    `1`    |
-| Access Denied (during traversal) | Skips entry without printing error message       | Continues |
+| Scenario                          | Error Output                                     | Exit Code |
+| :-------------------------------- | :----------------------------------------------- | :-------: |
+| Success                           | None                                             |    `0`    |
+| `--help` invoked                  | Displays group-organized help menu               |    `0`    |
+| `--version` invoked               | Displays version information                     |    `0`    |
+| `--help-icons` invoked            | Displays file types and icon mappings            |    `0`    |
+| Unknown options                   | `[ERROR]: Unknown option: <ARG>`                 |    `1`    |
+| Target path does not exist        | `[ERROR]: Specified path does not exist: <PATH>` |    `1`    |
+| Missing arguments for `-d` / `-e` | `[ERROR]: Depth value not specified...`          |    `1`    |
+| Access Denied (during traversal)  | Skips entry without printing error message       | Continues |

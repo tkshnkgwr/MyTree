@@ -37,7 +37,7 @@ Please adhere to the following principles when contributing to `MyTree`:
 ## 3. Commits & Pull Requests
 
 ### Commit Message Format
-Use the Conventional Commits format for commit messages:
+Use the Conventional Commits format for commit messages. Prefixes are written in English (`feat:`, `fix:`, `chore:`, etc.), while the following commit description body should be written in **Japanese** (e.g., `feat: 新機能の追加`, `chore: ビルド設定の更新`):
 
 - `feat:` New features
 - `fix:` Bug fixes

@@ -124,7 +124,9 @@ struct TreeConfig {
   - `.lua` => `🌙` (Lua)
   - `.c`, `.cpp`, `.h`, `.hpp`, `.cs` => `⚙` (C / C++ / C#)
   - `.php` => `🐘` (PHP)
-- データベース & スキーマ & IaC:
+- Web & スタイル & DB & API & インフラ:
+  - `.html`, `.htm` => `🌐` (HTML)
+  - `.css`, `.scss`, `.sass`, `.less` => `🎨` (スタイルシート)
   - `.sql`, `.db`, `.sqlite`, `.sqlite3` => `💾` (Database)
   - `.graphql`, `.gql`, `.prisma` => `🔷` (GraphQL / Prisma)
   - `.tf`, `.tfvars` => `🏗` (Terraform)
@@ -170,7 +172,7 @@ struct TreeConfig {
 | 正常終了                    | なし                                               |    `0`     |
 | `--help` 呼び出し           | ヘルプ表示 (カテゴリ別・バージョン情報含む)        |    `0`     |
 | `--version` 呼び出し        | バージョン表示                                     |    `0`     |
-| `--help-icons` 呼び出し    | アイコン対応一覧表示                               |    `0`     |
+| `--help-icons` 呼び出し     | アイコン対応一覧表示                               |    `0`     |
 | 未知のオプション指定        | `【エラー】: 不明なオプションです: <ARG>`          |    `1`     |
 | パスが存在しない            | `【エラー】: 指定されたパスが存在しません: <PATH>` |    `1`     |
 | `-d` や `-e` の引数欠落     | `【エラー】: 深度の値が指定されていません...`      |    `1`     |

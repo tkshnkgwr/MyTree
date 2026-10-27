@@ -1,9 +1,9 @@
 # MyTree 🌲
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)]()
+![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)
 [![Rust](https://img.shields.io/badge/rust-2021%20edition-orange.svg)](https://www.rust-lang.org/)
-[![Version](https://img.shields.io/badge/version-0.1.2-green.svg)]()
+![Version](https://img.shields.io/badge/version-0.1.5-green.svg)
 [![CI](https://github.com/tkshnkgwr/MyTree/actions/workflows/ci.yml/badge.svg)](https://github.com/tkshnkgwr/MyTree/actions/workflows/ci.yml)
 
 **English** | [日本語版](README_JA.md)
@@ -22,13 +22,17 @@ Built exclusively using Rust's standard library (`std`) with **zero external dep
 - 🔍 **Flexible Options**:
   - Classic display mode (`-c` / `--classic`)
   - Auto-apply `.gitignore` rules (`-g` / `--gitignore`)
+  - Total files & size calculation for directories (`-D` / `--dir-sizes` / `--du`)
+  - Streaming file line count display (`-l` / `--lines`)
+  - Multiple sorting keys & reverse order (`--sort <MODE>`, `-r` / `--reverse`)
+  - Structured data output (`--json`, `--xml`)
   - Wildcard pattern matching (`-e "*.log,*.tmp"`)
   - Icon mapping help (`--help-icons`)
-  - Directory total files & size calculation (`-D` / `--dir-sizes` / `--du`)
   - Version info (`-v` / `--version`)
   - Hide icons (`-I` / `--no-icons`)
   - Hide file sizes (`-S` / `--no-sizes`)
   - Max recursion depth control (`-d`)
+  - Show hidden files (`-a` / `--all`)
 
 ---
 
@@ -61,6 +65,12 @@ MyTree -c
 
 # Display total files and total size for directories
 MyTree -D
+
+# Display file line counts (text files only)
+MyTree -l
+
+# Sort by file size in reverse order
+MyTree --sort size -r
 
 # Output tree as JSON structured data
 MyTree --json
@@ -131,56 +141,11 @@ MyTree -e "*.log,*.tmp,target"
 4 directories, 34 files
 ```
 
-#### Classic Mode (`MyTree -c`)
+#### Directory Summary Mode (`MyTree -D`)
 ```text
-.
-+-- docs
-|   +-- en
-|   |   +-- ARCHITECTURE.md
-|   |   +-- CHANGELOG.md
-|   |   +-- CONTRIBUTING.md
-|   |   +-- DIAGRAM.md
-|   |   +-- FOOTPRINTS.md
-|   |   +-- INSTRUCTIONS.md
-|   |   +-- RELEASE.md
-|   |   +-- SECURITY.md
-|   |   +-- SPEC.md
-|   |   +-- TESTING.md
-|   |   \-- TODO.md
-|   \-- ja
-|       +-- ARCHITECTURE.md
-|       +-- CHANGELOG.md
-|       +-- CONTRIBUTING.md
-|       +-- DIAGRAM.md
-|       +-- FOOTPRINTS.md
-|       +-- INSTRUCTIONS.md
-|       +-- RELEASE.md
-|       +-- SECURITY.md
-|       +-- SPEC.md
-|       +-- TESTING.md
-|       \-- TODO.md
-+-- src
-|   +-- config.rs
-|   +-- icon.rs
-|   +-- main.rs
-|   +-- serializer.rs
-|   +-- tree.rs
-|   \-- util.rs
-+-- CHANGELOG.md
-+-- Cargo.lock
-+-- Cargo.toml
-+-- LICENSE
-+-- README.md
-\-- README_JA.md
-
-4 directories, 34 files
-```
-
-#### Directory Totals Mode (`MyTree -D`)
-```text
-📁 . [34 files, 120.5 KB]
-├── 📁 docs [22 files, 74.5 KB]
-│   ├── 📁 en [11 files, 39.7 KB]
+📁 . [4 dirs, 34 files, 114.2 KB]
+├── 📁 docs [2 dirs, 22 files, 73.9 KB]
+│   ├── 📁 en [11 files, 29.1 KB]
 │   │   ├── 📝 ARCHITECTURE.md [5.7 KB]
 │   │   ├── 📝 CHANGELOG.md [4.6 KB]
 │   │   ├── 📝 CONTRIBUTING.md [1.7 KB]
@@ -265,4 +230,4 @@ Detailed documentation is available in the `docs/en/` directory:
 
 ## 📄 License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the MIT License - Copyright (c) 2026 tkshnkgwr. See the [LICENSE](LICENSE) file for details.

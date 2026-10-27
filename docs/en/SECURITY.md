@@ -23,10 +23,10 @@ This document outlines the security policies, design principles, and vulnerabili
 
 Security updates are provided for the following versions:
 
-| Version                  | Support Status |
-| :----------------------- | :------------: |
-| Latest Release (`v0.1.x`) |  ✅ Supported   |
-| Older Releases           | ❌ Unsupported  |
+| Version                   | Support Status |
+| :------------------------ | :------------: |
+| Latest Release (`v0.1.x`) |  ✅ Supported  |
+| Older Releases            | ❌ Unsupported |
 
 ---
 

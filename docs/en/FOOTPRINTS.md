@@ -18,10 +18,10 @@ This document records the binary size, resource consumption (memory footprint), 
 
 ### 2.1 Binary Size
 
-| Build Type                        | Size (KB)           | Remarks                |
+| Build Type                        |      Size (KB)      | Remarks                |
 | :-------------------------------- | :-----------------: | :--------------------- |
-| Debug (`cargo build`)             | Approx. 250 - 450 KB| Includes debug symbols |
-| Release (`cargo build --release`) | Approx. 140 - 220 KB| Optimized              |
+| Debug (`cargo build`)             | Approx. 250 - 450 KB | Includes debug symbols |
+| Release (`cargo build --release`) | Approx. 140 - 220 KB | Optimized              |
 
 > **Features**: Since the utility does not import any external dependencies (e.g. `clap`), the release binary remains extremely small at around 200KB.
 

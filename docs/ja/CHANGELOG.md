@@ -7,6 +7,22 @@
 フォーマットは [Keep a Changelog](https://keepachangelog.com/ja/1.0.0/) に基づいており、
 このプロジェクトは [セマンティック バージョニング](https://semver.org/lang/ja/) に準拠しています。
 
+## [0.1.5] - 2026-10-27
+
+### Added
+- バージョン情報表示の拡張 (`print_version`):
+  - `MyTree -v` / `--version` 実行時にバージョン番号に加えて著作権表記およびライセンス情報を出力するよう改善。
+- AIエージェント開発支援スキルの追加 (`.agents/skills/`):
+  - `git-commit`, `markdown-table`, `rust-verification`, `vault-memo` の各ワークフロースキルを導入。
+
+### Fixed
+- README ドキュメントの復元と最新化:
+  - `README.md` および `README_JA.md` の完全なコンテンツ（使い方、全オプション一覧、出力例等）を復元・最新化。
+- 仕様書アイコン一覧の記載漏れ修正 (`SPEC.md`):
+  - 実装済みの Web & スタイルシート絵文字（`.html` / `.htm` => `🌐`、`.css` / `.scss` / `.sass` / `.less` => `🎨`）を日英両仕様書に追記・完全同期。
+- ドキュメント内のテスト件数表記の同期 (`TODO.md`):
+  - 全21テストに拡大したテスト網羅状況を反映。
+
 ## [0.1.4] - 2026-07-23
 
 ### Optimized

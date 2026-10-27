@@ -1,9 +1,9 @@
 # MyTree 🌲
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)]()
+![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)
 [![Rust](https://img.shields.io/badge/rust-2021%20edition-orange.svg)](https://www.rust-lang.org/)
-[![Version](https://img.shields.io/badge/version-0.1.2-green.svg)]()
+![Version](https://img.shields.io/badge/version-0.1.5-green.svg)
 [![CI](https://github.com/tkshnkgwr/MyTree/actions/workflows/ci.yml/badge.svg)](https://github.com/tkshnkgwr/MyTree/actions/workflows/ci.yml)
 
 [English README](README.md) | **日本語版**
@@ -22,12 +22,15 @@ WindowsのコマンドプロンプトやPowerShell（およびLinux/macOS環境�
 - 🔍 **柔軟なカスタマイズ**:
   - クラシック表示モード (`-c` / `--classic`)
   - `.gitignore` 自動読み込み・適用 (`-g` / `--gitignore`)
-  - フォルダ配下の総容量・総ファイル数集計表示 (`-D` / `--dir-sizes`)
+  - フォルダ配下の総容量・総ファイル数集計表示 (`-D` / `--dir-sizes` / `--du`)
+  - ストリーミング逐次ファイル行数カウント表示 (`-l` / `--lines`)
+  - 多彩なソート順・反転表示 (`--sort <MODE>`, `-r` / `--reverse`)
+  - 構造化データ形式での出力 (`--json`, `--xml`)
   - ワイルドカード (`*`, `?`) パターン除外 (`-e "*.log,*.tmp"`)
   - アイコン非表示 (`-I` / `--no-icons`)
   - ファイルサイズ非表示 (`-S` / `--no-sizes`)
   - 探索階層（深さ）の制限 (`-d`)
-  - 隠しファイル・ディレクトリの表示切り替え (`-a`)
+  - 隠しファイル・ディレクトリの表示切り替え (`-a` / `--all`)
   - バージョン表示 (`-v` / `--version`)
   - アイコン絵文字対応一覧ヘルプ (`--help-icons`)
 
@@ -38,7 +41,7 @@ WindowsのコマンドプロンプトやPowerShell（およびLinux/macOS環境�
 ### 前提条件
 - [Rust](https://rustup.rs/) (2021 edition 以降)
 
-### リリリースビルド
+### リリースビルド
 ```bash
 # クローンまたはダウンロードしたディレクトリに移動
 cd MyTree
@@ -63,6 +66,12 @@ MyTree -c
 # フォルダごとの配下ファイル数・合計容量を集計して表示
 MyTree -D
 
+# テキストファイルの行数を表示
+MyTree -l
+
+# ファイルサイズ順で降順（大きい順）にソートして表示
+MyTree --sort size -r
+
 # JSON フォーマットで構造化データを出力
 MyTree --json
 
@@ -85,7 +94,7 @@ MyTree -d 2
 MyTree -g
 
 # 特定のディレクトリを指定して実行
-MyTree C:\Users\Public
+MyTree "%USERPROFILE%\Documents"
 ```
 
 ### 📸 実行結果（出力例）
@@ -135,56 +144,11 @@ MyTree C:\Users\Public
 4 directories, 34 files
 ```
 
-#### クラシックモード (`MyTree -c`)
+#### ディレクトリ集計モード (`MyTree -D`)
 ```text
-.
-+-- docs
-|   +-- en
-|   |   +-- ARCHITECTURE.md
-|   |   +-- CHANGELOG.md
-|   |   +-- CONTRIBUTING.md
-|   |   +-- DIAGRAM.md
-|   |   +-- FOOTPRINTS.md
-|   |   +-- INSTRUCTIONS.md
-|   |   +-- RELEASE.md
-|   |   +-- SECURITY.md
-|   |   +-- SPEC.md
-|   |   +-- TESTING.md
-|   |   \-- TODO.md
-|   \-- ja
-|       +-- ARCHITECTURE.md
-|       +-- CHANGELOG.md
-|       +-- CONTRIBUTING.md
-|       +-- DIAGRAM.md
-|       +-- FOOTPRINTS.md
-|       +-- INSTRUCTIONS.md
-|       +-- RELEASE.md
-|       +-- SECURITY.md
-|       +-- SPEC.md
-|       +-- TESTING.md
-|       \-- TODO.md
-+-- src
-|   +-- config.rs
-|   +-- icon.rs
-|   +-- main.rs
-|   +-- serializer.rs
-|   +-- tree.rs
-|   \-- util.rs
-+-- CHANGELOG.md
-+-- Cargo.lock
-+-- Cargo.toml
-+-- LICENSE
-+-- README.md
-\-- README_JA.md
-
-4 directories, 34 files
-```
-
-#### フォルダ集計表示 (`MyTree -D`)
-```text
-📁 . [34 files, 120.5 KB]
-├── 📁 docs [22 files, 74.5 KB]
-│   ├── 📁 en [11 files, 39.7 KB]
+📁 . [4 dirs, 34 files, 114.2 KB]
+├── 📁 docs [2 dirs, 22 files, 73.9 KB]
+│   ├── 📁 en [11 files, 29.1 KB]
 │   │   ├── 📝 ARCHITECTURE.md [5.7 KB]
 │   │   ├── 📝 CHANGELOG.md [4.6 KB]
 │   │   ├── 📝 CONTRIBUTING.md [1.7 KB]
@@ -254,7 +218,7 @@ MyTree C:\Users\Public
 
 いつでもどこからでも `MyTree` コマンドを実行できるように PATH を登録します。
 
-1. `target/release/MyTree.exe` を任意の固定フォルダ（例: `C:\tools\bin` や `C:\Program Files\MyTree`）に配置します。
+1. `target/release/MyTree.exe` を任意の固定フォルダ（例: `C:\tools\bin` や `%USERPROFILE%\bin`）に配置します。
 2. Windowsキーを押し、「環境変数を編集」を検索して開きます。
 3. `Path` 環境変数に配置場所のフォルダパスを追加します。
 4. コマンドプロンプトやPowerShellを再起動すると、`MyTree` がご利用いただけます。
@@ -280,4 +244,4 @@ MyTree C:\Users\Public
 
 ## 📄 ライセンス
 
-本プロジェクトは [MIT License](LICENSE) のもとで公開されています。
+本プロジェクトは MIT License のもとで公開されています - Copyright (c) 2026 tkshnkgwr。詳細は [LICENSE](LICENSE) をご覧ください。
