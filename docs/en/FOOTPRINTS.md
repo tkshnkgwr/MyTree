@@ -9,7 +9,7 @@ This document records the binary size, resource consumption (memory footprint), 
 ## 1. Measurement Environment
 
 - **OS**: Windows 11 64-bit
-- **Toolchain**: Rust stable (2021 edition, `x86_64-pc-windows-msvc`)
+- **Toolchain**: Rust stable 1.100.0 (2021 edition, `x86_64-pc-windows-msvc`)
 - **Target Binary**: `target/release/MyTree.exe`
 
 ---
@@ -18,12 +18,12 @@ This document records the binary size, resource consumption (memory footprint), 
 
 ### 2.1 Binary Size
 
-| Build Type                        |      Size (KB)      | Remarks                |
-| :-------------------------------- | :-----------------: | :--------------------- |
-| Debug (`cargo build`)             | Approx. 250 - 450 KB | Includes debug symbols |
-| Release (`cargo build --release`) | Approx. 140 - 220 KB | Optimized              |
+| Build Type                        |    Size (KB)   | Remarks                |
+| :-------------------------------- | :------------: | :--------------------- |
+| Debug (`cargo build`)             | Approx. 455 KB | Includes debug symbols |
+| Release (`cargo build --release`) | Approx. 289 KB | Optimized              |
 
-> **Features**: Since the utility does not import any external dependencies (e.g. `clap`), the release binary remains extremely small at around 200KB.
+> **Features**: Since the utility does not import any external dependencies (e.g. `clap`), the release binary remains extremely small at around 289 KB even with JSON/XML serialization, sorting, and line counting included.
 
 ### 2.2 Memory Footprint (RAM)
 

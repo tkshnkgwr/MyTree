@@ -16,7 +16,7 @@
   - `-c`, `--classic`: クラシック表示モード (無色・アイコンなし・サイズなし・ASCII枝記号)
   - `-i`, `--icons`: ディレクトリ/ファイル別絵文字アイコン表示
   - `-I`, `--no-icons`: アイコン非表示
-  - `-s`, `--sizes`: ファイルサイズフォーマット表示 (`B`, `KB`, `MB`)
+  - `-s`, `--sizes`: ファイルサイズフォーマット表示 (`B`, `KB`, `MB`, `GB`)
   - `-S`, `--no-sizes`: ファイルサイズ非表示
   - `-D`, `--dir-sizes`, `--du`: フォルダ配下の総ファイル数および総容量を集計表示
   - `-a`, `--all`: ドット (`.`) 隠しファイル表示
@@ -34,21 +34,21 @@
 - [x] **拡張絵文字アイコンマッピングの追加 (`src/icon.rs`)**:
   - フォルダアイコン (`docs`, `.vscode`, `public` 等) やプログラミング言語・フレームワーク (`.swift`, `.kt`, `.vue`, `.svelte` 等)・ロックファイル・フォント・メディア等の網羅的追加
 - [x] **モジュール分割リファクタリング (1,000行ルール準拠)**:
-  - 単一ファイルであった `src/main.rs` を関心事ごとに 5 つのモジュール (`main.rs`, `config.rs`, `tree.rs`, `serializer.rs`, `util.rs`, `icon.rs`) に分割し高保守性を実現
-- [x] **ユニットテストの全領域への拡充 (全21テスト)**:
-  - 引数解析、バージョン表示、サイズフォーマット、アイコン判定、ワイルドカード、.gitignoreパース、ディレクトリ集計、JSON/XMLシリアライザ等すべてのモジュールを網羅
+  - 単一ファイルであった `src/main.rs` を関心事ごとに 6 ファイル (`main.rs` + 5 つのサブモジュール: `config.rs`, `tree.rs`, `serializer.rs`, `util.rs`, `icon.rs`) に分割し高保守性を実現
+- [x] **ユニットテストの全領域への拡充 (全25テスト)**:
+  - 引数解析、バージョン表示、サイズフォーマット (`B`〜`GB`)、アイコン判定、ワイルドカード、.gitignoreパース、ディレクトリ集計、ルート行描画、行数カウント、ソート、JSON/XMLシリアライザ等すべてのモジュールを網羅
 - [x] **Windows 10/11 ANSIカラー出力を自動有効化** (`kernel32.dll` ダイレクト Win32 API FFI)
 - [x] **ディレクトリ優先ソート機能** (視認性の向上)
 - [x] **ファイル行数表示オプション (`-l` / `--lines`) の追加**:
   - メモリ効率に優れたストリーミングバッファド逐次 `\n` カウントの実装
   - テキストファイル判定、バイナリ判定（先頭ヌルバイト検出）、10MB上限スキップ機能（`[>10MB skipped]` 表示）の統合
-  - 行数判定関数 `count_file_lines` および `-l` / `--lines` に対する単体テストの追加 (全18テストに拡大)
+  - 行数判定関数 `count_file_lines` および `-l` / `--lines` に対する単体テストの追加
 - [x] **表示ソート機能強化 (`--sort <MODE>`, `-r` / `--reverse`)**:
   - 名前順 (`name`)、ファイルサイズ順 (`size`)、更新日時順 (`time`) の比較ロジックを追加
-  - 順序反転フラグ `-r` / `--reverse` に対応し、`sort_dir_entries` 共通関数で安全・確実に制御 (全20テストへ拡大)
+  - 順序反転フラグ `-r` / `--reverse` に対応し、`sort_dir_entries` 共通関数で安全・確実に制御
 - [x] **完全ドキュメンテーション体系の構築**:
   - `README.md` / `README_JA.md`
-  - `SPEC.md`, `ARCHITECTURE.md`, `DIAGRAM.md`, `FOOTPRINTS.md`, `TODO.md`, `INSTRUCTIONS.md`, `CHANGELOG.md`
+  - `SPEC.md`, `ARCHITECTURE.md`, `DIAGRAM.md`, `FOOTPRINTS.md`, `TODO.md`, `INSTRUCTIONS.md`, `TESTING.md`, `RELEASE.md`, `CONTRIBUTING.md`, `SECURITY.md`, `CHANGELOG.md`
   - `LICENSE` (GPL-3.0-or-later)
 
 ---

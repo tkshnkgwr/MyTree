@@ -14,26 +14,29 @@ flowchart TD
     EnableANSI --> ParseArgs[parse_arguments<br/>Parse CLI arguments]
     
     ParseArgs -->|Arg error| ErrExit[Print error message & exit]
-    ParseArgs -->|--help| HelpExit[Print help & exit]
+    ParseArgs -->|--help / -v / --help-icons| HelpExit[Print info & exit]
     ParseArgs -->|Success| CheckPath{Check target path existence}
     
     CheckPath -->|Does not exist| PathErrExit[Path not found error & exit]
     CheckPath -->|Exists| CheckFormat{output_format}
     
-    CheckFormat -->|Text| PrintRoot[Print root directory line]
+    CheckFormat -->|Text| CheckDirSizes{Is -D enabled?}
+    CheckDirSizes -->|Yes| BuildSummary[build_dir_summary_map<br/>1-pass directory summary cache]
+    CheckDirSizes -->|No| PrintRoot[format_root_line<br/>Print root directory line]
+    BuildSummary --> PrintRoot
     PrintRoot --> PrintTree[print_tree<br/>Start recursive tree rendering]
     
     subgraph TreeRecursion [Tree Recursion: print_tree]
-        FilterEntries[Read entries & filter<br/>- Exclude hidden files<br/>- Exclude match patterns]
-        SortEntries[Directory-first sorting]
+        FilterEntries[Read entries & filter<br/>- Exclude hidden files<br/>- Exclude patterns & .gitignore]
+        SortEntries[sort_dir_entries<br/>Directory-first & key-cached sort]
         LoopEntries[Iterate entries one by one]
-        RenderLine[Render indent + branch + icon + name + size]
+        RenderLine[Render indent + branch + icon + name + size / lines]
         IsSubDir{Is directory?}
         RecurseSub[Recursively call print_tree]
         
         FilterEntries --> SortEntries
         SortEntries --> LoopEntries
-        SortEntries --> RenderLine
+        LoopEntries --> RenderLine
         RenderLine --> IsSubDir
         IsSubDir -->|Yes| RecurseSub
         IsSubDir -->|No| NextEntry[To next entry]
@@ -113,7 +116,8 @@ flowchart TD
     subgraph Release_Pipeline [Release Workflow: release.yml]
         PushTag --> CheckoutRel[actions/checkout]
         CheckoutRel --> InstallRustRel[dtolnay/rust-toolchain]
-        InstallRustRel --> BuildRel[cargo build --release]
+        InstallRustRel --> CacheRel[Swatinem/rust-cache]
+        CacheRel --> BuildRel[cargo build --release]
         BuildRel --> Zip[Compress-Archive -> MyTree-windows-x64.zip]
         Zip --> GHRelease[softprops/action-gh-release<br/>Create GitHub Release & attach asset]
     end

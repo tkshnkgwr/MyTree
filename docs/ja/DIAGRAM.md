@@ -14,26 +14,29 @@ flowchart TD
     EnableANSI --> ParseArgs[parse_arguments<br/>コマンドライン引数の解析]
     
     ParseArgs -->|引数エラー| ErrExit[エラーメッセージ出力 & 終了]
-    ParseArgs -->|--help| HelpExit[ヘルプ出力 & 終了]
+    ParseArgs -->|--help / -v / --help-icons| HelpExit[情報出力 & 終了]
     ParseArgs -->|解析成功| CheckPath{ターゲットパスの存在確認}
     
     CheckPath -->|存在しない| PathErrExit[指定パス不存在エラー & 終了]
     CheckPath -->|存在| CheckFormat{output_format}
     
-    CheckFormat -->|Text| PrintRoot[ルートディレクトリ行を出力]
+    CheckFormat -->|Text| CheckDirSizes{-D 指定あり？}
+    CheckDirSizes -->|Yes| BuildSummary[build_dir_summary_map<br/>1パスで全ディレクトリ集計]
+    CheckDirSizes -->|No| PrintRoot[format_root_line<br/>ルートディレクトリ行を出力]
+    BuildSummary --> PrintRoot
     PrintRoot --> PrintTree[print_tree<br/>再帰ツリー描画を開始]
     
     subgraph TreeRecursion [ツリー再帰処理: print_tree]
-        FilterEntries[エントリー読込 & フィルタ処理<br/>- 隠しファイル除外<br/>- 除外パターン合致除外]
-        SortEntries[ディレクトリ優先ソート]
+        FilterEntries[エントリー読込 & フィルタ処理<br/>- 隠しファイル除外<br/>- 除外パターン & .gitignore 除外]
+        SortEntries[sort_dir_entries<br/>ディレクトリ優先 & キーキャッシュソート]
         LoopEntries[エントリーを1つずつ反復]
-        RenderLine[インデント + 枝記号 + アイコン + 名前 + サイズ描画]
+        RenderLine[インデント + 枝記号 + アイコン + 名前 + サイズ / 行数描画]
         IsSubDir{ディレクトリか？}
         RecurseSub[再帰呼び出し print_tree]
         
         FilterEntries --> SortEntries
         SortEntries --> LoopEntries
-        SortEntries --> RenderLine
+        LoopEntries --> RenderLine
         RenderLine --> IsSubDir
         IsSubDir -->|Yes| RecurseSub
         IsSubDir -->|No| NextEntry[次のエントリーへ]
@@ -113,7 +116,8 @@ flowchart TD
     subgraph Release_Pipeline [Release ワークフロー: release.yml]
         PushTag --> CheckoutRel[actions/checkout]
         CheckoutRel --> InstallRustRel[dtolnay/rust-toolchain]
-        InstallRustRel --> BuildRel[cargo build --release]
+        InstallRustRel --> CacheRel[Swatinem/rust-cache]
+        CacheRel --> BuildRel[cargo build --release]
         BuildRel --> Zip[Compress-Archive -> MyTree-windows-x64.zip]
         Zip --> GHRelease[softprops/action-gh-release<br/>GitHub Release 作成 & アセット添付]
     end

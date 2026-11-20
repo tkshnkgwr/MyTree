@@ -3,7 +3,7 @@
 [![License: GPL-3.0-or-later](https://img.shields.io/badge/License-GPL--3.0--or--later-blue.svg)](LICENSE)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)
 [![Rust](https://img.shields.io/badge/rust-2021%20edition-orange.svg)](https://www.rust-lang.org/)
-![Version](https://img.shields.io/badge/version-0.1.6-green.svg)
+![Version](https://img.shields.io/badge/version-0.1.7-green.svg)
 [![CI](https://github.com/tkshnkgwr/MyTree/actions/workflows/ci.yml/badge.svg)](https://github.com/tkshnkgwr/MyTree/actions/workflows/ci.yml)
 
 [English README](README.md) | **日本語版**
@@ -69,7 +69,7 @@ MyTree -D
 # テキストファイルの行数を表示
 MyTree -l
 
-# ファイルサイズ順で降順（大きい順）にソートして表示
+# ファイルサイズ順で昇順（小さい順・逆順）にソートして表示（※デフォルトの --sort size は降順）
 MyTree --sort size -r
 
 # JSON フォーマットで構造化データを出力
@@ -102,115 +102,121 @@ MyTree "%USERPROFILE%\Documents"
 #### デフォルト表示 (`MyTree`)
 ```text
 📁 .
-├── 📁 docs
+├── 📚 docs
 │   ├── 📁 en
-│   │   ├── 📝 ARCHITECTURE.md [5.7 KB]
-│   │   ├── 📝 CHANGELOG.md [4.6 KB]
-│   │   ├── 📝 CONTRIBUTING.md [1.7 KB]
-│   │   ├── 📝 DIAGRAM.md [4.4 KB]
+│   │   ├── 📝 ARCHITECTURE.md [6.1 KB]
+│   │   ├── 📝 CHANGELOG.md [7.7 KB]
+│   │   ├── 📝 CONTRIBUTING.md [1.9 KB]
+│   │   ├── 📝 DIAGRAM.md [4.3 KB]
 │   │   ├── 📝 FOOTPRINTS.md [1.8 KB]
-│   │   ├── 📝 INSTRUCTIONS.md [2.1 KB]
-│   │   ├── 📝 RELEASE.md [1.6 KB]
+│   │   ├── 📝 INSTRUCTIONS.md [5.2 KB]
+│   │   ├── 📝 RELEASE.md [1.5 KB]
 │   │   ├── 📝 SECURITY.md [1.7 KB]
-│   │   ├── 📝 SPEC.md [8.5 KB]
+│   │   ├── 📝 SPEC.md [9.1 KB]
 │   │   ├── 📝 TESTING.md [1.9 KB]
-│   │   └── 📝 TODO.md [3.6 KB]
+│   │   └── 📝 TODO.md [4.1 KB]
 │   └── 📁 ja
-│       ├── 📝 ARCHITECTURE.md [6.4 KB]
-│       ├── 📝 CHANGELOG.md [6.3 KB]
-│       ├── 📝 CONTRIBUTING.md [2.3 KB]
-│       ├── 📝 DIAGRAM.md [4.7 KB]
-│       ├── 📝 FOOTPRINTS.md [2.1 KB]
-│       ├── 📝 INSTRUCTIONS.md [2.5 KB]
-│       ├── 📝 RELEASE.md [2.0 KB]
-│       ├── 📝 SECURITY.md [2.2 KB]
-│       ├── 📝 SPEC.md [9.8 KB]
+│       ├── 📝 ARCHITECTURE.md [7.2 KB]
+│       ├── 📝 CHANGELOG.md [9.9 KB]
+│       ├── 📝 CONTRIBUTING.md [2.4 KB]
+│       ├── 📝 DIAGRAM.md [4.6 KB]
+│       ├── 📝 FOOTPRINTS.md [2.0 KB]
+│       ├── 📝 INSTRUCTIONS.md [6.1 KB]
+│       ├── 📝 RELEASE.md [1.9 KB]
+│       ├── 📝 SECURITY.md [2.1 KB]
+│       ├── 📝 SPEC.md [10.5 KB]
 │       ├── 📝 TESTING.md [2.4 KB]
-│       └── 📝 TODO.md [4.5 KB]
+│       └── 📝 TODO.md [5.1 KB]
 ├── 📂 src
-│   ├── 🦀 config.rs [10.0 KB]
-│   ├── 🦀 icon.rs [6.4 KB]
-│   ├── 🦀 main.rs [4.2 KB]
-│   ├── 🦀 serializer.rs [9.5 KB]
-│   ├── 🦀 tree.rs [7.7 KB]
-│   └── 🦀 util.rs [2.6 KB]
-├── 📝 CHANGELOG.md [340 B]
-├── 📄 Cargo.lock [150 B]
-├── 🔧 Cargo.toml [426 B]
-├── 📄 LICENSE [1.1 KB]
-├── 📝 README.md [6.4 KB]
-└── 📝 README_JA.md [8.2 KB]
+│   ├── 🦀 config.rs [14.2 KB]
+│   ├── 🦀 icon.rs [9.0 KB]
+│   ├── 🦀 main.rs [4.5 KB]
+│   ├── 🦀 serializer.rs [10.4 KB]
+│   ├── 🦀 tree.rs [10.4 KB]
+│   └── 🦀 util.rs [16.8 KB]
+├── 📝 CHANGELOG.md [394 B]
+├── 📝 CLAUDE.md [641 B]
+├── 🔒 Cargo.lock [150 B]
+├── 🔧 Cargo.toml [452 B]
+├── 📝 GEMINI.md [1.2 KB]
+├── 📄 LICENSE [34.2 KB]
+├── 📝 README.md [10.4 KB]
+├── 📝 README_JA.md [12.2 KB]
+└── 📝 RULES.md [5.7 KB]
 
-4 directories, 34 files
+4 directories, 37 files
 ```
 
 #### ディレクトリ集計モード (`MyTree -D`)
 ```text
-📁 . [4 dirs, 34 files, 114.2 KB]
-├── 📁 docs [2 dirs, 22 files, 73.9 KB]
-│   ├── 📁 en [11 files, 29.1 KB]
-│   │   ├── 📝 ARCHITECTURE.md [5.7 KB]
-│   │   ├── 📝 CHANGELOG.md [4.6 KB]
-│   │   ├── 📝 CONTRIBUTING.md [1.7 KB]
-│   │   ├── 📝 DIAGRAM.md [4.4 KB]
+📁 . [37 files, 230.0 KB]
+├── 📚 docs [22 files, 99.4 KB]
+│   ├── 📁 en [11 files, 45.3 KB]
+│   │   ├── 📝 ARCHITECTURE.md [6.1 KB]
+│   │   ├── 📝 CHANGELOG.md [7.7 KB]
+│   │   ├── 📝 CONTRIBUTING.md [1.9 KB]
+│   │   ├── 📝 DIAGRAM.md [4.3 KB]
 │   │   ├── 📝 FOOTPRINTS.md [1.8 KB]
-│   │   ├── 📝 INSTRUCTIONS.md [2.1 KB]
-│   │   ├── 📝 RELEASE.md [1.6 KB]
+│   │   ├── 📝 INSTRUCTIONS.md [5.2 KB]
+│   │   ├── 📝 RELEASE.md [1.5 KB]
 │   │   ├── 📝 SECURITY.md [1.7 KB]
-│   │   ├── 📝 SPEC.md [8.5 KB]
+│   │   ├── 📝 SPEC.md [9.1 KB]
 │   │   ├── 📝 TESTING.md [1.9 KB]
-│   │   └── 📝 TODO.md [3.6 KB]
-│   └── 📁 ja [11 files, 44.8 KB]
-│       ├── 📝 ARCHITECTURE.md [6.4 KB]
-│       ├── 📝 CHANGELOG.md [6.3 KB]
-│       ├── 📝 CONTRIBUTING.md [2.3 KB]
-│       ├── 📝 DIAGRAM.md [4.7 KB]
-│       ├── 📝 FOOTPRINTS.md [2.1 KB]
-│       ├── 📝 INSTRUCTIONS.md [2.5 KB]
-│       ├── 📝 RELEASE.md [2.0 KB]
-│       ├── 📝 SECURITY.md [2.2 KB]
-│       ├── 📝 SPEC.md [9.8 KB]
+│   │   └── 📝 TODO.md [4.1 KB]
+│   └── 📁 ja [11 files, 54.2 KB]
+│       ├── 📝 ARCHITECTURE.md [7.2 KB]
+│       ├── 📝 CHANGELOG.md [9.9 KB]
+│       ├── 📝 CONTRIBUTING.md [2.4 KB]
+│       ├── 📝 DIAGRAM.md [4.6 KB]
+│       ├── 📝 FOOTPRINTS.md [2.0 KB]
+│       ├── 📝 INSTRUCTIONS.md [6.1 KB]
+│       ├── 📝 RELEASE.md [1.9 KB]
+│       ├── 📝 SECURITY.md [2.1 KB]
+│       ├── 📝 SPEC.md [10.5 KB]
 │       ├── 📝 TESTING.md [2.4 KB]
-│       └── 📝 TODO.md [4.5 KB]
-├── 📂 src [6 files, 40.3 KB]
-│   ├── 🦀 config.rs [10.0 KB]
-│   ├── 🦀 icon.rs [6.4 KB]
-│   ├── 🦀 main.rs [4.2 KB]
-│   ├── 🦀 serializer.rs [9.5 KB]
-│   ├── 🦀 tree.rs [7.7 KB]
-│   └── 🦀 util.rs [2.6 KB]
-├── 📝 CHANGELOG.md [340 B]
-├── 📄 Cargo.lock [150 B]
-├── 🔧 Cargo.toml [426 B]
-├── 📄 LICENSE [1.1 KB]
-├── 📝 README.md [6.4 KB]
-└── 📝 README_JA.md [8.2 KB]
+│       └── 📝 TODO.md [5.1 KB]
+├── 📂 src [6 files, 65.3 KB]
+│   ├── 🦀 config.rs [14.2 KB]
+│   ├── 🦀 icon.rs [9.0 KB]
+│   ├── 🦀 main.rs [4.5 KB]
+│   ├── 🦀 serializer.rs [10.4 KB]
+│   ├── 🦀 tree.rs [10.4 KB]
+│   └── 🦀 util.rs [16.8 KB]
+├── 📝 CHANGELOG.md [394 B]
+├── 📝 CLAUDE.md [641 B]
+├── 🔒 Cargo.lock [150 B]
+├── 🔧 Cargo.toml [452 B]
+├── 📝 GEMINI.md [1.2 KB]
+├── 📄 LICENSE [34.2 KB]
+├── 📝 README.md [10.4 KB]
+├── 📝 README_JA.md [12.2 KB]
+└── 📝 RULES.md [5.7 KB]
 
-4 directories, 34 files
+4 directories, 37 files
 ```
 
 ### コマンドラインオプション
 
-| オプション | ロングフラグ          |     デフォルト     | 説明                                                                     |
-| :--------- | :-------------------- | :----------------: | :----------------------------------------------------------------------- |
-| `-h`       | `--help`              |         -          | ヘルプ表示 (カテゴリ別 & デフォルト動作含む)                             |
-| `-v`       | `--version`           |         -          | バージョン情報を表示                                                     |
-|            | `--help-icons`        |         -          | アイコン絵文字とファイル拡張子の対応一覧を表示                           |
-| `-c`       | `--classic`           |        無効        | クラシックモード (カラー無効・アイコン無効・サイズ無効・`+--`/`\--`記号) |
-| `-i`       | `--icons`             |      **有効**      | ディレクトリやファイルに絵文字アイコンを付与                             |
-| `-I`       | `--no-icons`          |         -          | アイコン絵文字を表示しない (非表示)                                       |
-| `-s`       | `--sizes`             |      **有効**      | ファイルサイズ (`B`, `KB`, `MB`) を表示                                  |
-| `-S`       | `--no-sizes`          |         -          | ファイルサイズを表示しない (非表示)                                       |
-| `-D`       | `--dir-sizes`, `--du` |        無効        | フォルダ配下の総ファイル数および総容量を集計・表示                       |
-| `-l`       | `--lines`             |        無効        | ファイル行数を表示 (テキストファイル限定、10MB超はスキップ)              |
-|            | `--json`              |        無効        | 構造化データとして JSON 形式でツリーを出力                               |
-|            | `--xml`               |        無効        | 構造化データとして XML 形式でツリーを出力                                |
-| `-a`       | `--all`               |        無効        | ドット (`.`) から始まる隠しファイル・フォルダも表示                      |
-| `-g`       | `--gitignore`         |        無効        | `.gitignore` ファイルから除外パターンを自動読み込みして適用              |
-|            | `--sort <MODE>`       |       `name`       | 表示ソート順を指定 (`name`: 名前順, `size`: サイズ順, `time`: 更新日時順)|
-| `-r`       | `--reverse`           |        無効        | ソート順を反転 (逆順) して表示                                           |
-| `-d <D>`   | `--depth <DEPTH>`     |       無制限       | 探索する深さの上限を指定 (例: `-d 2`)                                    |
-| `-e <PAT>` | `--exclude <PAT>`     | `"target,...,.git"`| 除外する名前やワイルドカードパターンをカンマ区切りで指定                 |
+| オプション | ロングフラグ          |      デフォルト     | 説明                                                                           |
+| :--------- | :-------------------- | :-----------------: | :----------------------------------------------------------------------------- |
+| `-h`       | `--help`              |          -          | ヘルプ表示 (カテゴリ別 & デフォルト動作含む)                                   |
+| `-v`       | `--version`           |          -          | バージョン情報を表示                                                           |
+|            | `--help-icons`        |          -          | アイコン絵文字とファイル拡張子の対応一覧を表示                                 |
+| `-c`       | `--classic`           |        無効         | クラシックモード (カラー無効・アイコン無効・サイズ無効・`+--`/`\--`記号)       |
+| `-i`       | `--icons`             |      **有効**       | ディレクトリやファイルに絵文字アイコンを付与                                   |
+| `-I`       | `--no-icons`          |          -          | アイコン絵文字を表示しない (非表示)                                            |
+| `-s`       | `--sizes`             |      **有効**       | ファイルサイズ (`B`, `KB`, `MB`, `GB`) を表示                                  |
+| `-S`       | `--no-sizes`          |          -          | ファイルサイズを表示しない (非表示)                                            |
+| `-D`       | `--dir-sizes`, `--du` |        無効         | フォルダ配下の総ファイル数および総容量を集計・表示                             |
+| `-l`       | `--lines`             |        無効         | ファイル行数を表示 (テキストファイル限定、10MB超はスキップ)                    |
+|            | `--json`              |        無効         | 構造化データとして JSON 形式でツリーを出力                                     |
+|            | `--xml`               |        無効         | 構造化データとして XML 形式でツリーを出力                                      |
+| `-a`       | `--all`               |        無効         | ドット (`.`) から始まる隠しファイル・フォルダも表示                            |
+| `-g`       | `--gitignore`         |        無効         | `.gitignore` ファイルから除外パターンを自動読み込みして適用                    |
+|            | `--sort <MODE>`       |       `name`        | 表示ソート順を指定 (`name`: 名前昇順, `size`: サイズ降順, `time`: 更新日時降順)|
+| `-r`       | `--reverse`           |        無効         | ソート順を反転 (逆順) して表示                                                 |
+| `-d <D>`   | `--depth <DEPTH>`     |       無制限        | 探索する深さの上限を指定 (例: `-d 2`)                                          |
+| `-e <PAT>` | `--exclude <PAT>`     | `"target,...,.git"` | 除外する名前やワイルドカードパターンをカンマ区切りで指定                       |
 
 ---
 

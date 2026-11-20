@@ -47,7 +47,10 @@ pub fn build_tree_node(
         };
     }
 
-    *dir_count += 1;
+    // テキスト出力 (print_tree) と集計数を一致させるため、ルート自身は dir_count に含めない
+    if current_depth > 0 {
+        *dir_count += 1;
+    }
 
     let mut children = Vec::new();
 
@@ -196,19 +199,23 @@ fn serialize_json_node(node: &TreeNode, indent_level: usize, out: &mut String) {
 
     if node.is_dir {
         out.push_str(",\n");
-        out.push_str(&format!("{}\"children\": [\n", indent));
-        for (idx, child) in node.children.iter().enumerate() {
-            let child_indent = "  ".repeat(indent_level + 1);
-            out.push_str(&format!("{}{{\n", child_indent));
-            serialize_json_node(child, indent_level + 2, out);
-            out.push('\n');
-            if idx < node.children.len() - 1 {
-                out.push_str(&format!("{}}},\n", child_indent));
-            } else {
-                out.push_str(&format!("{}}}\n", child_indent));
+        if node.children.is_empty() {
+            out.push_str(&format!("{}\"children\": []", indent));
+        } else {
+            out.push_str(&format!("{}\"children\": [\n", indent));
+            for (idx, child) in node.children.iter().enumerate() {
+                let child_indent = "  ".repeat(indent_level + 1);
+                out.push_str(&format!("{}{{\n", child_indent));
+                serialize_json_node(child, indent_level + 2, out);
+                out.push('\n');
+                if idx < node.children.len() - 1 {
+                    out.push_str(&format!("{}}},\n", child_indent));
+                } else {
+                    out.push_str(&format!("{}}}\n", child_indent));
+                }
             }
+            out.push_str(&format!("{}]", indent));
         }
-        out.push_str(&format!("{}]", indent));
     }
 }
 
@@ -298,5 +305,27 @@ mod tests {
         assert!(xml.contains("<node type=\"directory\" name=\"root\""));
         assert!(xml.contains("<node type=\"file\" name=\"file.txt\""));
         assert!(xml.contains("<summary directories=\"1\" files=\"1\" />"));
+    }
+
+    #[test]
+    fn test_build_tree_node_excludes_root_from_dir_count() {
+        let temp_dir = std::env::temp_dir().join("mytree_test_build_tree_node");
+        let sub_dir = temp_dir.join("sub");
+        let _ = fs::remove_dir_all(&temp_dir);
+        fs::create_dir_all(&sub_dir).unwrap();
+        fs::write(temp_dir.join("root.txt"), "hello").unwrap();
+        fs::write(sub_dir.join("child.txt"), "world!").unwrap();
+
+        let config = TreeConfig::default();
+        let mut dir_count = 0;
+        let mut file_count = 0;
+        let root = build_tree_node(&temp_dir, 0, &config, &mut dir_count, &mut file_count);
+
+        assert!(root.is_dir);
+        assert_eq!(dir_count, 1);
+        assert_eq!(file_count, 2);
+        assert_eq!(root.size, 11);
+
+        let _ = fs::remove_dir_all(&temp_dir);
     }
 }

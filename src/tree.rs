@@ -15,105 +15,20 @@ use std::path::{Path, PathBuf};
 /// 指定ディレクトリ配下の全ディレクトリの (総サイズ, 総ファイル数) を 1 パスで集計・マップ化する
 pub fn build_dir_summary_map(dir: &Path, config: &TreeConfig) -> HashMap<PathBuf, (u64, usize)> {
     let mut map = HashMap::new();
-    calculate_dir_summary_recursive(dir, config, &mut map);
+    calculate_dir_summary_inner(dir, config, Some(&mut map));
     map
-}
-
-fn calculate_dir_summary_recursive(
-    dir: &Path,
-    config: &TreeConfig,
-    map: &mut HashMap<PathBuf, (u64, usize)>,
-) -> (u64, usize) {
-    let mut total_size = 0u64;
-    let mut total_files = 0usize;
-
-    let gitignore_patterns = if config.use_gitignore {
-        parse_gitignore_file(dir)
-    } else {
-        Vec::new()
-    };
-
-    if let Ok(entries) = fs::read_dir(dir) {
-        for entry in entries.flatten() {
-            let file_name = entry.file_name().to_string_lossy().into_owned();
-
-            if file_name.starts_with('.') && !config.show_hidden {
-                continue;
-            }
-
-            let is_excluded = config
-                .exclude_patterns
-                .iter()
-                .chain(gitignore_patterns.iter())
-                .any(|pattern| match_wildcard(pattern, &file_name));
-            if is_excluded {
-                continue;
-            }
-
-            let path = entry.path();
-            if path.is_dir() {
-                let (sub_size, sub_files) = calculate_dir_summary_recursive(&path, config, map);
-                total_size += sub_size;
-                total_files += sub_files;
-            } else {
-                total_files += 1;
-                if let Ok(metadata) = entry.metadata() {
-                    total_size += metadata.len();
-                }
-            }
-        }
-    }
-
-    map.insert(dir.to_path_buf(), (total_size, total_files));
-    (total_size, total_files)
-}
-
-/// ルート行のフォーマット
-pub fn format_root_line(
-    config: &TreeConfig,
-    summary_map: Option<&HashMap<PathBuf, (u64, usize)>>,
-) -> String {
-    let folder_name = config
-        .target_path
-        .file_name()
-        .and_then(|n| n.to_str())
-        .unwrap_or(".");
-
-    let base = if config.classic_mode {
-        folder_name.to_string()
-    } else if config.show_icons {
-        format!("\x1b[1;34m📁 {}\x1b[0m", folder_name)
-    } else {
-        format!("\x1b[1;34m{}\x1b[0m", folder_name)
-    };
-
-    if config.show_dir_sizes {
-        let (total_size, total_files) = summary_map
-            .and_then(|m| m.get(&config.target_path).copied())
-            .unwrap_or_else(|| calculate_dir_summary(&config.target_path, config));
-
-        if config.classic_mode {
-            format!(
-                "{} [{} files, {}]",
-                base,
-                total_files,
-                format_byte_size(total_size)
-            )
-        } else {
-            format!(
-                "{} \x1b[90m[{} files, {}]\x1b[0m",
-                base,
-                total_files,
-                format_byte_size(total_size)
-            )
-        }
-    } else {
-        base
-    }
 }
 
 /// 指定ディレクトリ配下の全ファイルの合計サイズおよびファイル数を再帰的に集計する
 pub fn calculate_dir_summary(dir: &Path, config: &TreeConfig) -> (u64, usize) {
+    calculate_dir_summary_inner(dir, config, None)
+}
+
+fn calculate_dir_summary_inner(
+    dir: &Path,
+    config: &TreeConfig,
+    mut map: Option<&mut HashMap<PathBuf, (u64, usize)>>,
+) -> (u64, usize) {
     let mut total_size = 0u64;
     let mut total_files = 0usize;
 
@@ -144,7 +59,8 @@ pub fn calculate_dir_summary(dir: &Path, config: &TreeConfig) -> (u64, usize) {
 
             let path = entry.path();
             if path.is_dir() {
-                let (sub_size, sub_files) = calculate_dir_summary(&path, config);
+                let (sub_size, sub_files) =
+                    calculate_dir_summary_inner(&path, config, map.as_deref_mut());
                 total_size += sub_size;
                 total_files += sub_files;
             } else {
@@ -156,7 +72,58 @@ pub fn calculate_dir_summary(dir: &Path, config: &TreeConfig) -> (u64, usize) {
         }
     }
 
+    if let Some(m) = map {
+        m.insert(dir.to_path_buf(), (total_size, total_files));
+    }
     (total_size, total_files)
+}
+
+/// ルート行のフォーマット
+pub fn format_root_line(
+    config: &TreeConfig,
+    summary_map: Option<&HashMap<PathBuf, (u64, usize)>>,
+) -> String {
+    let folder_name = config
+        .target_path
+        .file_name()
+        .and_then(|n| n.to_str())
+        .unwrap_or(".");
+
+    let base = if config.classic_mode {
+        folder_name.to_string()
+    } else if config.show_icons {
+        format!(
+            "\x1b[1;34m{} {}\x1b[0m",
+            icon::get_icon_emoji(folder_name, true),
+            folder_name
+        )
+    } else {
+        format!("\x1b[1;34m{}\x1b[0m", folder_name)
+    };
+
+    if config.show_dir_sizes {
+        let (total_size, total_files) = summary_map
+            .and_then(|m| m.get(&config.target_path).copied())
+            .unwrap_or_else(|| calculate_dir_summary(&config.target_path, config));
+
+        if config.classic_mode {
+            format!(
+                "{} [{} files, {}]",
+                base,
+                total_files,
+                format_byte_size(total_size)
+            )
+        } else {
+            format!(
+                "{} \x1b[90m[{} files, {}]\x1b[0m",
+                base,
+                total_files,
+                format_byte_size(total_size)
+            )
+        }
+    } else {
+        base
+    }
 }
 
 /// 再帰的なツリー構築コア処理 (標準テキスト表示)
@@ -354,5 +321,17 @@ mod tests {
         let map = build_dir_summary_map(Path::new("."), &config);
         assert!(!map.is_empty());
         assert!(map.contains_key(Path::new(".")));
+    }
+
+    #[test]
+    fn test_format_root_line_dynamic_icon() {
+        let mut config = TreeConfig::default();
+        assert!(format_root_line(&config, None).contains("📁 ."));
+
+        config.target_path = PathBuf::from("src");
+        assert!(format_root_line(&config, None).contains("📂 src"));
+
+        config.target_path = PathBuf::from("docs");
+        assert!(format_root_line(&config, None).contains("📚 docs"));
     }
 }

@@ -125,7 +125,7 @@ pub fn print_icons_help() {
 \x1b[36m【プログラミング言語 & スクリプト】\x1b[0m\n  \
   🦀  .rs                        (Rust)\n  \
   🐍  .py, .pyw                  (Python)\n  \
-  🟨  .js, .jsx, .ts, .tsx       (JavaScript / TypeScript)\n  \
+  🟨  .js, .jsx, .ts, .tsx, .mjs, .cjs (JavaScript / TypeScript)\n  \
   💚  .vue                       (Vue)\n  \
   🟧  .svelte                    (Svelte)\n  \
   🐹  .go                        (Go)\n  \
@@ -141,7 +141,7 @@ pub fn print_icons_help() {
 \x1b[36m【Web & デザイン & データベース & インフラ】\x1b[0m\n  \
   🌐  .html, .htm                (HTML)\n  \
   🎨  .css, .scss, .sass, .less  (スタイルシート)\n  \
-  💾  .sql, .db, .sqlite         (データベース / SQL)\n  \
+  💾  .sql, .db, .sqlite, .sqlite3 (データベース / SQL)\n  \
   🔷  .graphql, .gql, .prisma    (GraphQL / Prisma)\n  \
   🏗  .tf, .tfvars               (Terraform)\n  \
   ⚡  .proto, .wasm              (Protobuf / WebAssembly)\n\n\
@@ -153,9 +153,9 @@ pub fn print_icons_help() {
   📜  .txt, .text, .log          (テキスト / ログ)\n  \
   📝  .md, .markdown             (Markdown)\n  \
   📄  .json, .jsonc              (JSON)\n  \
-  🔧  .toml, .yaml, .yml, .ini (設定ファイル)\n  \
-  🔒  .lock, Cargo.lock, yarn.lock (ロックファイル)\n  \
-  🛠  Makefile, justfile         (ビルドツール)\n  \
+  🔧  .toml, .yaml, .yml, .ini, .conf, .config (設定ファイル)\n  \
+  🔒  .lock, Cargo.lock, package-lock.json, yarn.lock, pnpm-lock.yaml (ロックファイル)\n  \
+  🛠  Makefile, justfile, CMakeLists.txt (ビルドツール)\n  \
   🔑  .env*                      (環境変数)\n  \
   🙈  .gitignore, .dockerignore  (無視リスト)\n  \
   🐳  Dockerfile, docker-compose (Docker)\n\n\

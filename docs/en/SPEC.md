@@ -23,26 +23,26 @@ MyTree [OPTIONS] [TARGET_PATH]
 
 ### 2.2 Options List
 
-| Option | Long Flag             | Argument              |    Default     | Description                                                             |
-| :----- | :-------------------- | :-------------------- | :------------: | :---------------------------------------------------------------------- |
-| `-h`   | `--help`              | None                  |       -        | Shows categorized help menu and exits with code `0`.                    |
-| `-v`   | `--version`           | None                  |       -        | Prints version info and exits with code `0`.                            |
-|        | `--help-icons`        | None                  |       -        | Prints icon mapping table and exits with code `0`.                      |
-| `-c`   | `--classic`           | None                  |    `false`     | Classic mode (no colors, icons, sizes; ASCII connectors).               |
-| `-i`   | `--icons`             | None                  |  `true` (std)  | Shows emoji icons for files and directories.                            |
-| `-I`   | `--no-icons`          | None                  |    `false`     | Hides emoji icons.                                                      |
-| `-s`   | `--sizes`             | None                  |  `true` (std)  | Displays file sizes next to file names.                                 |
-| `-S`   | `--no-sizes`          | None                  |    `false`     | Hides file sizes.                                                       |
-| `-D`   | `--dir-sizes`, `--du` | None                  |    `false`     | Displays total file count and size for directories.                     |
-| `-l`   | `--lines`             | None                  |    `false`     | Displays file line counts (text files only, >10MB skipped).             |
-|        | `--json`              | None                  |    `false`     | Outputs tree structure in JSON format.                                  |
-|        | `--xml`               | None                  |    `false`     | Outputs tree structure in XML format.                                   |
-| `-a`   | `--all`               | None                  |    `false`     | Includes hidden files starting with a dot (`.`).                        |
-| `-g`   | `--gitignore`         | None                  |    `false`     | Auto-applies ignore patterns from `.gitignore` files.                   |
-|        | `--sort`              | `<MODE>` (String)     |     `name`     | Selects sort key (`name`, `size`, `time`).                              |
-| `-r`   | `--reverse`           | None                  |    `false`     | Reverses the sorting order.                                             |
-| `-d`   | `--depth`             | `<DEPTH>` (usize)     | `0` (unlimited)| Restricts maximum tree traversal depth.                                 |
-| `-e`   | `--exclude`           | `<PATTERNS>` (String) | `"target,..."` | Exclude directory names or wildcard patterns (`*`, `?`).                |
+| Option | Long Flag                      | Argument              |     Default     | Description                                                               |
+| :----- | :----------------------------- | :-------------------- | :-------------: | :------------------------------------------------------------------------ |
+| `-h`   | `--help`                       | None                  |        -        | Shows categorized help menu and exits with code `0`.                      |
+| `-v`   | `--version`                    | None                  |        -        | Prints version info and exits with code `0`.                              |
+|        | `--help-icons`, `--icons-help` | None                  |        -        | Prints icon mapping table and exits with code `0`.                        |
+| `-c`   | `--classic`                    | None                  |     `false`     | Classic mode (no colors, icons, sizes; ASCII connectors).                 |
+| `-i`   | `--icons`                      | None                  |  `true` (std)   | Shows emoji icons for files and directories.                              |
+| `-I`   | `--no-icons`                   | None                  |     `false`     | Hides emoji icons.                                                        |
+| `-s`   | `--sizes`                      | None                  |  `true` (std)   | Displays file sizes (`B`, `KB`, `MB`, `GB`) next to file names.           |
+| `-S`   | `--no-sizes`                   | None                  |     `false`     | Hides file sizes.                                                         |
+| `-D`   | `--dir-sizes`, `--du`          | None                  |     `false`     | Displays total file count and size for directories.                       |
+| `-l`   | `--lines`                      | None                  |     `false`     | Displays file line counts (text files only, >10MB skipped).               |
+|        | `--json`                       | None                  |     `false`     | Outputs tree structure in JSON format.                                    |
+|        | `--xml`                        | None                  |     `false`     | Outputs tree structure in XML format.                                     |
+| `-a`   | `--all`                        | None                  |     `false`     | Includes hidden files starting with a dot (`.`).                          |
+| `-g`   | `--gitignore`                  | None                  |     `false`     | Auto-applies ignore patterns from `.gitignore` files.                     |
+|        | `--sort`                       | `<MODE>` (String)     |     `name`      | Selects sort key (`name`: A-Z, `size`: largest first, `time`: newest).    |
+| `-r`   | `--reverse`                    | None                  |     `false`     | Reverses the sorting order.                                               |
+| `-d`   | `--depth`                      | `<DEPTH>` (usize)     | `0` (unlimited) | Restricts maximum tree traversal depth.                                   |
+| `-e`   | `--exclude`                    | `<PATTERNS>` (String) | `"target,..."`  | Exclude directory names or wildcard patterns (`*`, `?`).                  |
 
 ### 2.3 Default Configuration Structure (`TreeConfig`)
 

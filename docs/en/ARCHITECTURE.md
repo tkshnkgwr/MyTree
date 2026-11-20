@@ -13,10 +13,10 @@ The application is structured into modular components, cleanly separating differ
 ```text
 src/
 ├── main.rs                     # Entry point & Windows ANSI control
-├── config.rs                   # CLI arguments parsing & TreeConfig/OutputFormat definitions
+├── config.rs                   # CLI arguments parsing & TreeConfig/OutputFormat/SortMode definitions
 ├── tree.rs                     # Directory traversal & text tree rendering core engine
 ├── serializer.rs               # JSON / XML structured data serializer engine
-├── util.rs                     # General helper functions (wildcard match, byte format)
+├── util.rs                     # General helpers (wildcard, byte format, sorting, line count, .gitignore)
 └── icon.rs                     # Icon emoji detection module (filename/extension mapping)
 ```
 
@@ -25,24 +25,26 @@ src/
   - `main()`: Entry point and top-level execution flow matching.
   - `enable_ansi_support()`: Enables ANSI escape colors on Windows consoles (Win32 API FFI).
 - **`src/config.rs`**:
-  - Defines configuration structures (`TreeConfig`, `OutputFormat`).
+  - Defines configuration structures (`TreeConfig`, `OutputFormat`, `SortMode`).
   - Contains parser and help screen utilities: `parse_arguments()`, `print_version()`, `print_help()`.
 - **`src/tree.rs`**:
   - `print_tree()`: Core recursive engine to read directories and draw text trees.
-  - `format_root_line()`, `calculate_dir_summary()`: Generates the root visual style and aggregates child stats.
+  - `build_dir_summary_map()`: 1-pass directory summary cache builder (`-D` optimization).
+  - `format_root_line()`, `calculate_dir_summary()`: Generates the root visual style (with dynamic icon) and aggregates child stats.
 - **`src/serializer.rs`**:
   - `TreeNode`: In-memory hierarchical tree representation.
-  - `build_tree_node()`: Core function to recursively build tree data structures.
+  - `build_tree_node()`: Core function to recursively build tree data structures (excludes root from `dir_count` to match text output).
   - Hand-crafted serialization logic: `serialize_json()`, `serialize_xml()`.
   - Escaping utilities: `escape_json_str()`, `escape_xml_str()`.
 - **`src/util.rs`**:
   - `match_wildcard()`: Evaluates wildcard string matching (`*`, `?`) with an allocation-free ASCII fast-path.
-  - `format_byte_size()`: Formats raw bytes to human-readable units (`B`, `KB`, `MB`).
+  - `format_byte_size()`: Formats raw bytes to human-readable units (`B`, `KB`, `MB`, `GB`).
   - `sort_dir_entries()`: Directory-first multi-mode sorting with key-caching to minimize system calls.
-  - `count_file_lines()`: Streaming line counter (with 10MB limit and binary detection).
+  - `count_file_lines()`, `is_supported_text_extension()`: Streaming line counter (with 10MB limit and binary detection).
   - `parse_gitignore_file()`: Parses `.gitignore` files for pattern matching.
 - **`src/icon.rs`**:
   - `get_icon_emoji()`: Resolves appropriate emoji icons based on filenames, extensions, and directory status.
+  - `print_icons_help()`: Displays the icon emoji mapping reference table.
 
 ---
 

@@ -216,7 +216,7 @@ pub fn print_help() {
 \x1b[36m【フィルタリング・探索制御】\x1b[0m\n  \
   -a, --all                  隠しファイル・ディレクトリ (ドット開始) も表示 [デフォルト: 無効]\n  \
   -g, --gitignore            .gitignore ファイルを読み込んで除外パターンを自動適用 [デフォルト: 無効]\n  \
-  --sort <MODE>              表示ソート順を指定 (name: 名前順, size: サイズ順, time: 更新日時順) [デフォルト: name]\n  \
+  --sort <MODE>              表示ソート順を指定 (name: 名前昇順, size: サイズ降順, time: 更新日時降順) [デフォルト: name]\n  \
   -r, --reverse              ソート順を逆順 (反転) に表示 [デフォルト: 無効]\n  \
   -d, --depth <DEPTH>        探索する最大の階層深さを制限 (例: -d 2) [デフォルト: 無制限]\n  \
   -e, --exclude <PATTERNS>   除外する名前・ワイルドカード(*,?)をカンマ区切り指定 [デフォルト: \"target,node_modules,.git\"]",
@@ -289,6 +289,19 @@ mod tests {
         let args = vec!["MyTree".to_string(), "-D".to_string()];
         assert!(parse_arguments(&args, &mut config).is_ok());
         assert!(config.show_dir_sizes);
+    }
+
+    #[test]
+    fn test_parse_arguments_lines() {
+        let mut config = TreeConfig::default();
+        let args = vec!["MyTree".to_string(), "-l".to_string()];
+        assert!(parse_arguments(&args, &mut config).is_ok());
+        assert!(config.show_lines);
+
+        let mut config = TreeConfig::default();
+        let args = vec!["MyTree".to_string(), "--lines".to_string()];
+        assert!(parse_arguments(&args, &mut config).is_ok());
+        assert!(config.show_lines);
     }
 
     #[test]
@@ -372,6 +385,6 @@ mod tests {
 
     #[test]
     fn test_version_env() {
-        assert_eq!(env!("CARGO_PKG_VERSION"), "0.1.6");
+        assert_eq!(env!("CARGO_PKG_VERSION"), "0.1.7");
     }
 }

@@ -7,6 +7,21 @@
 フォーマットは [Keep a Changelog](https://keepachangelog.com/ja/1.0.0/) に基づいており、
 このプロジェクトは [セマンティック バージョニング](https://semver.org/lang/ja/) に準拠しています。
 
+## [0.1.7] - 2026-11-20
+
+### Fixed
+- JSON / XML 出力 (`--json`, `--xml`) でルートディレクトリ自身が集計 `summary.directories` に重複加算され、テキスト出力とディレクトリ数が 1 件ずれていた矛盾を修正 (`src/serializer.rs`)。
+- ルート行 (`format_root_line`) のフォルダアイコンが固定 `📁` になっていた不備を修正し、`get_icon_emoji` による動的解決へ統一 (`src/tree.rs`)。
+- `.gitignore` パース (`parse_gitignore_file`) で否定パターン (`!` 開始行) が除外対象として誤認識される問題を修正 (`src/util.rs`)。
+- `README_JA.md` の `--sort size -r` の説明矛盾（降順と昇順の誤記）、および `README.md` / `README_JA.md` の出力サンプルの不整合（`📚 docs`・`🔒 Cargo.lock`・`-D` 表示形式）を実出力に合わせて最新化。
+- `DIAGRAM.md` の Mermaid フローチャート内のノード接続ミスおよび不足ステップ（`-D` 集計、`release.yml` キャッシュ等）を修正。
+
+### Changed
+- バイトサイズ整形 (`format_byte_size`) に `GB`（ギガバイト）単位を追加 (`src/util.rs`)。
+- 行数カウント対象拡張子 (`is_supported_text_extension`) を `icon.rs` の対応言語・設定ファイル（`.vue`, `.svelte`, `.kt`, `.swift`, `.cs`, `Makefile`, `Dockerfile` 等）に合わせて拡充 (`src/util.rs`)。
+- `calculate_dir_summary` と `calculate_dir_summary_recursive` の重複ロジックを統合 (`src/tree.rs`)。
+- `--help` / `--help-icons` の表記および各種ドキュメント (`SPEC.md`, `ARCHITECTURE.md`, `FOOTPRINTS.md`, `TODO.md`) を最新実装と同期、ユニットテストを全 25 件へ拡充。
+
 ## [0.1.6] - 2026-10-27
 
 ### Changed

@@ -26,33 +26,63 @@ pub fn is_supported_text_extension(ext: &str) -> bool {
     matches!(
         ext.to_lowercase().as_str(),
         "rs" | "py"
+            | "pyw"
             | "js"
+            | "mjs"
+            | "cjs"
             | "ts"
             | "jsx"
             | "tsx"
+            | "vue"
+            | "svelte"
+            | "astro"
             | "html"
+            | "htm"
             | "css"
+            | "scss"
+            | "sass"
+            | "less"
             | "json"
+            | "jsonc"
             | "toml"
             | "yaml"
             | "yml"
             | "md"
+            | "markdown"
             | "txt"
+            | "text"
             | "c"
             | "cpp"
             | "h"
             | "hpp"
+            | "cs"
             | "java"
+            | "swift"
+            | "kt"
+            | "kts"
+            | "dart"
+            | "lua"
             | "go"
             | "sh"
+            | "zsh"
+            | "bash"
+            | "fish"
             | "bat"
+            | "cmd"
             | "ps1"
             | "xml"
             | "sql"
+            | "graphql"
+            | "gql"
+            | "prisma"
+            | "tf"
+            | "tfvars"
+            | "proto"
             | "rb"
             | "php"
             | "ini"
             | "conf"
+            | "config"
             | "cfg"
             | "csv"
             | "tsv"
@@ -60,6 +90,10 @@ pub fn is_supported_text_extension(ext: &str) -> bool {
             | "env"
             | "gitignore"
             | ".gitignore"
+            | ".dockerignore"
+            | "makefile"
+            | "justfile"
+            | "dockerfile"
     )
 }
 
@@ -200,14 +234,20 @@ pub fn match_wildcard(pattern: &str, text: &str) -> bool {
     p_idx == p_chars.len()
 }
 
-/// バイト単位のファイルサイズを読みやすい形式に変換 (`B`, `KB`, `MB`)
+/// バイト単位のファイルサイズを読みやすい形式に変換 (`B`, `KB`, `MB`, `GB`)
 pub fn format_byte_size(bytes: u64) -> String {
-    if bytes < 1024 {
+    const KB: u64 = 1024;
+    const MB: u64 = 1024 * 1024;
+    const GB: u64 = 1024 * 1024 * 1024;
+
+    if bytes < KB {
         format!("{} B", bytes)
-    } else if bytes < 1024 * 1024 {
-        format!("{:.1} KB", bytes as f64 / 1024.0)
+    } else if bytes < MB {
+        format!("{:.1} KB", bytes as f64 / KB as f64)
+    } else if bytes < GB {
+        format!("{:.1} MB", bytes as f64 / MB as f64)
     } else {
-        format!("{:.1} MB", bytes as f64 / (1024.0 * 1024.0))
+        format!("{:.1} GB", bytes as f64 / GB as f64)
     }
 }
 
@@ -226,7 +266,7 @@ pub fn parse_gitignore_file(dir_path: &Path) -> Vec<String> {
     content
         .lines()
         .map(|line| line.trim())
-        .filter(|line| !line.is_empty() && !line.starts_with('#'))
+        .filter(|line| !line.is_empty() && !line.starts_with('#') && !line.starts_with('!'))
         .map(|line| {
             let mut pattern = line;
             if pattern.starts_with('/') {
@@ -352,6 +392,19 @@ mod tests {
         assert_eq!(format_byte_size(1048575), "1024.0 KB");
         assert_eq!(format_byte_size(1048576), "1.0 MB");
         assert_eq!(format_byte_size(10485760), "10.0 MB");
+        assert_eq!(format_byte_size(1073741824), "1.0 GB");
+        assert_eq!(format_byte_size(2684354560), "2.5 GB");
+    }
+
+    #[test]
+    fn test_is_supported_text_extension() {
+        assert!(is_supported_text_extension("rs"));
+        assert!(is_supported_text_extension("vue"));
+        assert!(is_supported_text_extension("svelte"));
+        assert!(is_supported_text_extension("Makefile"));
+        assert!(is_supported_text_extension("Dockerfile"));
+        assert!(!is_supported_text_extension("png"));
+        assert!(!is_supported_text_extension("exe"));
     }
 
     #[test]
@@ -379,6 +432,7 @@ mod tests {
         writeln!(file, "*.log").unwrap();
         writeln!(file, "/build/").unwrap();
         writeln!(file, "  .env  ").unwrap();
+        writeln!(file, "!.env.example").unwrap();
 
         let patterns = parse_gitignore_file(&temp_dir);
         assert_eq!(patterns, vec!["target", "*.log", "build", ".env"]);

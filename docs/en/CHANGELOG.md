@@ -7,6 +7,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.1.7] - 2026-11-20
+
+### Fixed
+- Fixed directory count mismatch in JSON/XML output (`--json`, `--xml`) where the root directory was counted in `summary.directories`, differing by 1 from text output (`src/serializer.rs`).
+- Fixed `format_root_line` using a hardcoded `📁` icon instead of resolving dynamically via `get_icon_emoji` (`src/tree.rs`).
+- Fixed `parse_gitignore_file` treating negation patterns (lines starting with `!`) as exclusion rules (`src/util.rs`).
+- Fixed contradictory `--sort size -r` description in `README_JA.md` and synchronized sample outputs in `README.md` / `README_JA.md` with actual CLI output (`📚 docs`, `🔒 Cargo.lock`, `-D` summary format).
+- Fixed disconnected Mermaid node and missing workflow steps (`-D` summary map, `release.yml` cache) in `DIAGRAM.md`.
+
+### Changed
+- Added `GB` (gigabyte) unit formatting to `format_byte_size` (`src/util.rs`).
+- Expanded `is_supported_text_extension` to match modern languages and build/config files supported by `icon.rs` (`.vue`, `.svelte`, `.kt`, `.swift`, `.cs`, `Makefile`, `Dockerfile`, etc.) (`src/util.rs`).
+- Consolidated duplicate directory summary traversal logic in `src/tree.rs`.
+- Updated `--help`, `--help-icons`, and bilingual documentation (`SPEC.md`, `ARCHITECTURE.md`, `FOOTPRINTS.md`, `TODO.md`), expanding unit tests to 25 total tests.
+
 ## [0.1.6] - 2026-10-27
 
 ### Changed

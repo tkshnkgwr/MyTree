@@ -16,7 +16,7 @@ This document tracks completed features, current tasks, and future ideas for `My
   - `-c`, `--classic`: Classic mode (ASCII output: `+-- `, `\-- `, `|   `; no color, icons, or sizes).
   - `-i`, `--icons`: Enables directory/file type emoji icons.
   - `-I`, `--no-icons`: Hides emoji icons.
-  - `-s`, `--sizes`: Enables file size formatting (`B`, `KB`, `MB`).
+  - `-s`, `--sizes`: Enables file size formatting (`B`, `KB`, `MB`, `GB`).
   - `-S`, `--no-sizes`: Hides file sizes.
   - `-D`, `--dir-sizes`, `--du`: Calculates and prints total file counts and sizes for folders.
   - `-a`, `--all`: Shows hidden files/directories starting with a dot (`.`).
@@ -34,21 +34,21 @@ This document tracks completed features, current tasks, and future ideas for `My
 - [x] **Expanded Emoji Icon Map (`src/icon.rs`)**:
   - Added mappings for directory types (`docs`, `.vscode`, `public`, etc.), lock files, build tools, languages (`.swift`, `.kt`, `.vue`, `.svelte`, `.astro`, etc.), and databases/schemas.
 - [x] **Refactored Module Separation (1,000-Line Rule Met)**:
-  - Split single file `src/main.rs` into 5 distinct modules (`main.rs`, `config.rs`, `tree.rs`, `serializer.rs`, `util.rs`, `icon.rs`) to maintain codebase cleanliness.
-- [x] **Expanded Unit Tests (21 Total Tests)**:
-  - High test coverage spanning CLI options, version info, byte conversions, icon resolution, wildcard rules, gitignore parsing, JSON/XML serialization, and traversal sums.
+  - Split single file `src/main.rs` into 6 files (`main.rs` + 5 submodules: `config.rs`, `tree.rs`, `serializer.rs`, `util.rs`, `icon.rs`) to maintain codebase cleanliness.
+- [x] **Expanded Unit Tests (25 Total Tests)**:
+  - High test coverage spanning CLI options, version info, byte conversions (`B`–`GB`), icon resolution, wildcard rules, gitignore parsing, root line rendering, line counting, sorting, JSON/XML serialization, and traversal sums.
 - [x] **Automatic Windows ANSI Virtual Terminal Initialization** (direct `kernel32.dll` Win32 API FFI)
 - [x] **Directory-First Traversal Sorting** (folders listed before files)
 - [x] **Added File Line Count Option (`-l` / `--lines`)**:
   - Implemented memory-efficient streaming buffered sequential `\n` line counting.
   - Integrated curated text extension filtering, binary detection (null byte check), and >10MB limit skip (`[>10MB skipped]`).
-  - Added unit tests for `count_file_lines` and `-l` / `--lines` (expanded to 18 total tests).
+  - Added unit tests for `count_file_lines` and `-l` / `--lines`.
 - [x] **Enhanced Tree Display Sorting (`--sort <MODE>`, `-r` / `--reverse`)**:
   - Implemented sort modes by name (`name`), file size (`size`), and modified time (`time`).
-  - Added order reversal flag (`-r` / `--reverse`) and centralized logic in `sort_dir_entries` (expanded to 20 total tests).
+  - Added order reversal flag (`-r` / `--reverse`) and centralized logic in `sort_dir_entries`.
 - [x] **Complete Documentation System**:
   - `README.md` / `README_JA.md`
-  - `SPEC.md`, `ARCHITECTURE.md`, `DIAGRAM.md`, `FOOTPRINTS.md`, `TODO.md`, `INSTRUCTIONS.md`, `CHANGELOG.md`
+  - `SPEC.md`, `ARCHITECTURE.md`, `DIAGRAM.md`, `FOOTPRINTS.md`, `TODO.md`, `INSTRUCTIONS.md`, `TESTING.md`, `RELEASE.md`, `CONTRIBUTING.md`, `SECURITY.md`, `CHANGELOG.md`
   - `LICENSE` (GPL-3.0-or-later)
 
 ---

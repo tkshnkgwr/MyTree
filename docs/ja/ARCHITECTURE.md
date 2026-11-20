@@ -13,10 +13,10 @@
 ```text
 src/
 ├── main.rs                     # エントリポイント & Windows ANSI制御
-├── config.rs                   # CLI引数パース & 設定構造体 (TreeConfig, OutputFormat)
+├── config.rs                   # CLI引数パース & 設定構造体 (TreeConfig, OutputFormat, SortMode)
 ├── tree.rs                     # ディレクトリ探索 & テキストツリー描画コアエンジン
 ├── serializer.rs               # JSON / XML 構造化データシリアライザエンジン
-├── util.rs                     # 汎用ヘルパー関数 (ワイルドカード検索, バイト表示)
+├── util.rs                     # 汎用ヘルパー関数 (ワイルドカード, バイト表示, ソート, 行数, .gitignore)
 └── icon.rs                     # アイコン絵文字判定モジュール (ファイル名/拡張子マッピング)
 ```
 
@@ -25,24 +25,26 @@ src/
   - `main()`: エントリポイントおよび全体フローマッチング
   - `enable_ansi_support()`: Windows ANSIエスケープ有効化 (Win32 API FFI)
 - **`src/config.rs`**:
-  - `TreeConfig`, `OutputFormat`: オプション設定構造体・フォーマット定義
+  - `TreeConfig`, `OutputFormat`, `SortMode`: オプション設定構造体・フォーマット/ソート定義
   - `parse_arguments()` / `print_version()` / `print_help()`: CLIオプションパースおよびヘルプ出力
 - **`src/tree.rs`**:
   - `print_tree()`: 再帰的ディレクトリ探索および標準構造ツリー描画
-  - `format_root_line()` / `calculate_dir_summary()`: ルート行生成およびフォルダ容量・ファイル数集計
+  - `build_dir_summary_map()`: 1 パスでの全ディレクトリ集計マップ生成 (`-D` 高速化)
+  - `format_root_line()` / `calculate_dir_summary()`: ルート行生成 (動的アイコン解決) およびフォルダ容量・ファイル数集計
 - **`src/serializer.rs`**:
   - `TreeNode`: メモリ内階層データ構造モデル
-  - `build_tree_node()`: 階層ツリー構築関数
+  - `build_tree_node()`: 階層ツリー構築関数 (ルート除外でテキスト出力と集計一致)
   - `serialize_json()` / `serialize_xml()`: 手動構造化シリアライザエンジン
   - `escape_json_str()` / `escape_xml_str()`: 特殊文字エスケープ
 - **`src/util.rs`**:
   - `match_wildcard()`: ワイルドカード (*, ?) パターンマッチ処理 (ASCII高速パス)
-  - `format_byte_size()`: ファイルサイズ単位換算表記
+  - `format_byte_size()`: ファイルサイズ単位換算表記 (`B`, `KB`, `MB`, `GB`)
   - `sort_dir_entries()`: ディレクトリ優先・マルチモードソート (システムコール最小化キーキャッシュ)
-  - `count_file_lines()`: ストリーミングファイル行数カウント (10MB制限・バイナリ判定)
+  - `count_file_lines()` / `is_supported_text_extension()`: ストリーミングファイル行数カウント (10MB制限・バイナリ判定)
   - `parse_gitignore_file()`: `.gitignore` ファイルのパースおよびパターン抽出
 - **`src/icon.rs`**:
   - `get_icon_emoji()`: 拡張子・ファイル名・ディレクトリ名に応じた絵文字マッピングエンジン
+  - `print_icons_help()`: アイコン絵文字対応一覧表の出力
 
 ---
 
